@@ -1,0 +1,118 @@
+# =============================================================================
+# Problems — Quiz seed data
+# =============================================================================
+# Each problem is tagged with primary patterns and required data structures.
+# For Easy/Medium: usually 1 pattern. For Hard: 1-3 patterns + composite DS.
+#
+# This file starts small (10 examples). Plan to backfill from NeetCode 150 /
+# Blind 75 — both have curated lists with pattern tags freely available.
+#
+# References: pattern_id from patterns.yaml, ds_id from data-structures.yaml
+# =============================================================================
+
+problems:
+
+  - id: lc-1
+    name: "Two Sum"
+    leetcode_num: 1
+    difficulty: Easy
+    patterns: [hashing]
+    structures: [hashmap]
+    blurb: |
+      Find indices of two numbers that sum to target. HashMap of complement
+      lookups in one pass. The canonical hashing problem.
+
+  - id: lc-3
+    name: "Longest Substring Without Repeating Characters"
+    leetcode_num: 3
+    difficulty: Medium
+    patterns: [sliding-window-dynamic]
+    structures: [hashmap, hashset]
+    blurb: |
+      Expand window, shrink when duplicate appears.
+
+  - id: lc-15
+    name: "3Sum"
+    leetcode_num: 15
+    difficulty: Medium
+    patterns: [two-pointers]
+    structures: [array]
+    blurb: |
+      Sort, fix one element, two-pointer the rest. Skip duplicates carefully.
+
+  - id: lc-42
+    name: "Trapping Rain Water"
+    leetcode_num: 42
+    difficulty: Hard
+    patterns: [two-pointers, monotonic-stack, dp-1d]
+    structures: [array, stack]
+    blurb: |
+      Three valid solutions. Two pointers is most space-efficient.
+      Monotonic stack version is the cleanest. DP precomputes left/right max.
+
+  - id: lc-76
+    name: "Minimum Window Substring"
+    leetcode_num: 76
+    difficulty: Hard
+    patterns: [sliding-window-dynamic]
+    structures: [hashmap]
+    blurb: |
+      Expand to satisfy, then shrink to optimize. Track count of "needed" chars.
+
+  - id: lc-146
+    name: "LRU Cache"
+    leetcode_num: 146
+    difficulty: Medium
+    patterns: []
+    structures: [hashmap, doubly-linked-list]
+    composite: "LRU Cache"
+    blurb: |
+      HashMap + Doubly Linked List for O(1) get/put. Or LinkedHashMap shortcut.
+
+  - id: lc-200
+    name: "Number of Islands"
+    leetcode_num: 200
+    difficulty: Medium
+    patterns: [dfs, bfs, matrix-traversal, union-find-pattern]
+    structures: [array]
+    blurb: |
+      Three valid approaches. DFS is shortest. Union-Find is overkill but valid.
+
+  - id: lc-207
+    name: "Course Schedule"
+    leetcode_num: 207
+    difficulty: Medium
+    patterns: [topological-sort]
+    structures: [adj-list, queue, hashmap]
+    blurb: |
+      Detect cycle in directed graph. Kahn's algorithm with in-degree queue.
+
+  - id: lc-212
+    name: "Word Search II"
+    leetcode_num: 212
+    difficulty: Hard
+    patterns: [backtracking, dfs]
+    structures: [trie]
+    composite: "Word Search in Grid"
+    blurb: |
+      Trie + DFS with backtracking. Trie enables prefix pruning — without it,
+      naive search is O(words * cells * 4^L) and TLEs.
+
+  - id: lc-295
+    name: "Find Median from Data Stream"
+    leetcode_num: 295
+    difficulty: Hard
+    patterns: [heap-pattern]
+    structures: [heap]
+    composite: "Streaming Median"
+    blurb: |
+      Two heaps, balanced. addNum O(log n), findMedian O(1).
+
+# =============================================================================
+# TODO: Backfill from
+#   - https://github.com/neetcode-gh/leetcode (NeetCode 150 — already tagged)
+#   - https://www.teamblind.com/post/Blind-75-LeetCode-Questions-OaM1orEU
+#
+# Suggested first batch: 50 mediums covering every pattern at least twice.
+# Then 25 hards focused on composites (Trie+DFS, two heaps, Dijkstra, etc.)
+# =============================================================================

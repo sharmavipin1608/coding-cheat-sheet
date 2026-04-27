@@ -1,0 +1,132 @@
+/* ============================================================
+   Python for Java Developers — Shared Stylesheet
+   All day pages link to this file.
+   Per-page overrides (phase badge colors) live in a small
+   <style> block inside each day's <head>.
+   ============================================================ */
+
+/* Reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Base */
+body { background: #0d0d0d; color: #e0e0e0; font-family: 'Syne', sans-serif; line-height: 1.7; }
+a { color: #f0e040; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Top nav */
+.topnav { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; border-bottom: 1px solid #2a2a2a; background: #0d0d0d; position: sticky; top: 0; z-index: 100; }
+.topnav-left { font-size: 0.85rem; color: #888; }
+.topnav-left a { color: #f0e040; }
+.topnav-right { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #555; }
+
+/* Hero */
+.hero { padding: 48px 32px 32px; max-width: 900px; margin: 0 auto; border-bottom: 1px solid #2a2a2a; }
+.hero-meta { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+.day-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; background: #f0e040; color: #0d0d0d; padding: 3px 10px; border-radius: 4px; font-weight: 600; }
+/* .phase-badge colors are set per-file (differ by phase) */
+.phase-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; padding: 3px 10px; border-radius: 4px; }
+.hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; color: #f0e040; letter-spacing: -0.02em; margin-bottom: 12px; }
+.hero p { color: #888; font-size: 1rem; max-width: 650px; }
+
+/* Main content */
+main { max-width: 900px; margin: 0 auto; padding: 40px 32px 80px; }
+section { margin-bottom: 60px; }
+section h2 { font-size: 1.5rem; font-weight: 700; color: #f0e040; margin-bottom: 24px; padding-bottom: 10px; border-bottom: 1px solid #2a2a2a; }
+section h3 { font-size: 1.1rem; font-weight: 700; color: #40e0b0; margin: 32px 0 12px; }
+p { margin-bottom: 14px; color: #c0c0c0; }
+
+/* Plan box */
+.plan-box { background: #141414; border: 1px solid #2a2a2a; border-radius: 10px; padding: 28px; margin-bottom: 24px; }
+.plan-box h3 { margin-top: 0; color: #f0e040; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
+.plan-items { list-style: none; }
+.plan-items li { padding: 8px 0; border-bottom: 1px solid #1f1f1f; font-size: 0.9rem; color: #e0e0e0; }
+.plan-items li:last-child { border-bottom: none; }
+
+/* Java parallels box */
+.java-parallels { background: #0f0f1a; border: 1px solid #1a1a3a; border-radius: 8px; padding: 16px 20px; margin-top: 16px; }
+.java-parallels h4 { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: #7090ff; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.java-parallels ul { list-style: none; }
+.java-parallels li { font-size: 0.85rem; color: #888; padding: 4px 0; display: flex; gap: 8px; }
+.java-parallels li::before { content: '→'; color: #f0e040; flex-shrink: 0; }
+
+/* Code blocks */
+pre { border-radius: 8px; margin: 16px 0; overflow-x: auto; font-size: 0.875rem; line-height: 1.6; }
+pre code { font-family: 'JetBrains Mono', monospace !important; }
+.python-block pre { background: #0d1a0d !important; border-left: 3px solid #f0e040; padding: 20px; }
+.java-block pre { background: #1a1a2e !important; border-left: 3px solid #4a5a8a; padding: 20px; }
+.block-label { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px 4px 0 0; display: inline-block; margin-bottom: -4px; position: relative; z-index: 1; }
+.python-block .block-label { background: #0d1a0d; color: #f0e040; border: 1px solid #f0e040; border-bottom: none; }
+.java-block .block-label { background: #1a1a2e; color: #7090ff; border: 1px solid #4a5a8a; border-bottom: none; }
+
+/* Side-by-side Java vs Python */
+.side-by-side { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+@media (max-width: 680px) { .side-by-side { grid-template-columns: 1fr; } }
+
+/* Callouts */
+.callout { background: #1a1410; border: 1px solid #3d2a10; border-left: 3px solid #f0e040; border-radius: 8px; padding: 16px 20px; margin: 20px 0; font-size: 0.9rem; color: #c0a060; }
+.callout strong { color: #f0e040; }
+.callout-teal { background: #0f1a18; border: 1px solid #1a3d35; border-left: 3px solid #40e0b0; color: #60c0a0; }
+.callout-teal strong { color: #40e0b0; }
+
+/* Quick Reference grid */
+.qr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.qr-item { background: #141414; border: 1px solid #2a2a2a; border-radius: 8px; padding: 14px 16px; }
+.qr-item .qr-label { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+.qr-item code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: #f0e040; background: #0d1a0d; padding: 2px 6px; border-radius: 3px; }
+.qr-item p { font-size: 0.8rem; color: #666; margin-top: 6px; margin-bottom: 0; }
+
+/* Wrap-up section */
+.takeaway-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.takeaway-list li { position: relative; padding-left: 20px; font-size: 0.95rem; color: #c0c0c0; line-height: 1.6; }
+.takeaway-list li::before { content: '◆'; color: #f0e040; font-size: 0.6rem; position: absolute; left: 0; top: 0.45em; }
+
+.practice-box { background: #141414; border: 1px solid #2a2a2a; border-radius: 10px; padding: 24px; margin-top: 24px; }
+.practice-box h4 { font-size: 0.85rem; font-weight: 700; color: #40e0b0; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.practice-box ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.practice-box ul li { font-size: 0.9rem; color: #888; padding-left: 16px; position: relative; }
+.practice-box ul li::before { content: '›'; position: absolute; left: 0; color: #40e0b0; }
+
+.next-teaser { margin-top: 20px; padding: 16px 20px; background: #0f1a18; border: 1px solid #1a3d35; border-radius: 8px; font-size: 0.9rem; color: #60c0a0; }
+.next-teaser strong { color: #40e0b0; }
+
+/* Project day spec / stretch boxes */
+.spec-box { background: #141414; border: 1px solid #2a2a2a; border-radius: 10px; padding: 28px; margin-bottom: 24px; }
+.spec-box h3 { margin-top: 0; color: #ff6b35; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
+.spec-box ul { list-style: none; }
+.spec-box ul li { padding: 6px 0; border-bottom: 1px solid #1f1f1f; font-size: 0.9rem; color: #e0e0e0; }
+.spec-box ul li:last-child { border-bottom: none; }
+
+.stretch-box { background: #1a120a; border: 1px solid #3d2a10; border-left: 3px solid #ff6b35; border-radius: 8px; padding: 16px 20px; margin-top: 16px; font-size: 0.9rem; color: #c0a060; }
+.stretch-box strong { color: #ff6b35; }
+
+/* Bottom navigation */
+.bottom-nav { display: flex; justify-content: space-between; align-items: center; padding: 32px; border-top: 1px solid #2a2a2a; max-width: 900px; margin: 0 auto; }
+.nav-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 1px solid #2a2a2a; border-radius: 8px; color: #e0e0e0; font-size: 0.9rem; font-weight: 600; transition: all 0.15s ease; background: #141414; }
+.nav-btn:hover { border-color: #f0e040; color: #f0e040; text-decoration: none; }
+.done-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 1px solid #2a3d2a; border-radius: 8px; background: #1e2a1e; color: #40e0b0; font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: 'Syne', sans-serif; transition: all 0.15s ease; }
+.done-btn:hover { border-color: #40e0b0; }
+.done-btn.marked { background: #40e0b0; color: #0d0d0d; border-color: #40e0b0; }
+
+/* Specialty tables / boxes (added per-day, kept here for reuse) */
+.dunder-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.88rem; }
+.dunder-table th { background: #141414; color: #f0e040; text-align: left; padding: 10px 14px; border-bottom: 2px solid #2a2a2a; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
+.dunder-table td { padding: 9px 14px; border-bottom: 1px solid #1f1f1f; color: #c0c0c0; vertical-align: top; }
+.dunder-table td:first-child { font-family: 'JetBrains Mono', monospace; color: #f0e040; font-size: 0.82rem; white-space: nowrap; }
+.dunder-table td:nth-child(2) { color: #7090ff; font-size: 0.82rem; }
+
+.diagram-box { background: #141414; border: 1px solid #2a2a2a; border-radius: 10px; padding: 24px; margin: 20px 0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #c0c0c0; line-height: 2; }
+
+.decision-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.88rem; }
+.decision-table th { background: #141414; color: #f0e040; text-align: left; padding: 10px 14px; border-bottom: 2px solid #2a2a2a; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
+.decision-table td { padding: 9px 14px; border-bottom: 1px solid #1f1f1f; color: #c0c0c0; vertical-align: top; }
+
+.shell-block { background: #0a0a0a; border: 1px solid #2a2a2a; border-left: 3px solid #888; border-radius: 8px; padding: 16px 20px; margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #aaa; overflow-x: auto; }
+.shell-block .prompt { color: #555; user-select: none; }
+
+/* Mobile */
+@media (max-width: 600px) {
+  main { padding: 24px 16px 60px; }
+  .hero { padding: 32px 16px 24px; }
+  .topnav { padding: 12px 16px; }
+  .bottom-nav { padding: 24px 16px; flex-wrap: wrap; gap: 12px; }
+}

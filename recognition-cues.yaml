@@ -1,0 +1,222 @@
+# =============================================================================
+# Recognition Cues — Problem signal → Pattern mapping
+# =============================================================================
+# This is the "if you see X, think Y" page.
+# Use during the first 30 seconds of any interview problem.
+# =============================================================================
+
+cues:
+  # --- Array & String signals ---
+  - signal: "Sorted array, find pair/triplet"
+    patterns: [two-pointers]
+    confidence: high
+
+  - signal: "Pair with target sum (unsorted)"
+    patterns: [hashing]
+    confidence: high
+
+  - signal: "Substring / subarray with property (longest, shortest, count)"
+    patterns: [sliding-window-dynamic]
+    confidence: high
+
+  - signal: "Window / subarray of fixed size K"
+    patterns: [sliding-window-fixed]
+    confidence: high
+
+  - signal: "Subarray sum equals K"
+    patterns: [prefix-sum, hashing]
+    confidence: high
+    note: "Combo: prefix sum + HashMap of prefix→count."
+
+  - signal: "Range sum queries (immutable)"
+    patterns: [prefix-sum]
+    confidence: high
+
+  - signal: "Many range updates, one final read"
+    patterns: [difference-array]
+    confidence: high
+
+  - signal: "Maximum subarray / contiguous"
+    patterns: [kadane]
+    confidence: high
+
+  # --- Search signals ---
+  - signal: "Find in O(log n) / sorted input"
+    patterns: [binary-search]
+    confidence: high
+
+  - signal: "Minimize the max / Maximize the min"
+    patterns: [binary-search-on-answer]
+    confidence: high
+    note: "Senior-distinguishing pattern. Define feasibility predicate first."
+
+  - signal: "Find k-th smallest / largest"
+    patterns: [heap-pattern, binary-search-on-answer]
+    confidence: medium
+    note: "Heap for streaming; binary-search-on-answer for matrix problems."
+
+  # --- Linked list signals ---
+  - signal: "Cycle in linked list / find duplicate in O(1) space"
+    patterns: [fast-slow]
+    confidence: high
+
+  - signal: "Middle of linked list"
+    patterns: [fast-slow]
+    confidence: high
+
+  # --- Stack/Queue signals ---
+  - signal: "Next greater / smaller element"
+    patterns: [monotonic-stack]
+    confidence: high
+
+  - signal: "Histogram / largest rectangle"
+    patterns: [monotonic-stack]
+    confidence: high
+
+  - signal: "Sliding window max / min"
+    patterns: [monotonic-deque]
+    confidence: high
+
+  - signal: "Parentheses / expression parsing"
+    patterns: [monotonic-stack]
+    confidence: high
+    note: "Plain stack, not necessarily monotonic."
+
+  # --- Graph & Tree signals ---
+  - signal: "Shortest path in unweighted graph"
+    patterns: [bfs]
+    confidence: high
+
+  - signal: "Shortest path with positive weights"
+    patterns: []
+    extra_ds: [heap]
+    confidence: high
+    note: "Dijkstra — heap + adjacency list. Add as a graph-algo, not pure pattern."
+
+  - signal: "All paths / configurations"
+    patterns: [backtracking, dfs]
+    confidence: high
+
+  - signal: "Connected components / are X and Y connected?"
+    patterns: [union-find-pattern, dfs, bfs]
+    confidence: high
+    note: "Union-Find for streaming/dynamic; DFS/BFS for static."
+
+  - signal: "Course schedule / build order / dependencies"
+    patterns: [topological-sort]
+    confidence: high
+
+  - signal: "Detect cycle in directed graph"
+    patterns: [topological-sort, dfs]
+    confidence: high
+
+  - signal: "Detect cycle in undirected graph"
+    patterns: [union-find-pattern, dfs]
+    confidence: high
+
+  - signal: "Level-order tree traversal"
+    patterns: [bfs]
+    confidence: high
+
+  - signal: "Tree depth / path-sum"
+    patterns: [dfs]
+    confidence: high
+
+  - signal: "Grid with neighbors / flood fill"
+    patterns: [matrix-traversal, dfs, bfs]
+    confidence: high
+
+  # --- Greedy & Interval signals ---
+  - signal: "Merge / overlap intervals"
+    patterns: [interval]
+    confidence: high
+
+  - signal: "Meeting rooms (count of rooms / max overlap)"
+    patterns: [sweep-line, heap-pattern]
+    confidence: high
+
+  - signal: "Skyline / events on a timeline"
+    patterns: [sweep-line]
+    confidence: high
+
+  - signal: "Schedule tasks / activity selection"
+    patterns: [greedy, interval]
+    confidence: high
+
+  - signal: "Top K / K closest / K smallest"
+    patterns: [heap-pattern]
+    confidence: high
+
+  - signal: "Streaming median / running statistics"
+    patterns: [heap-pattern]
+    confidence: high
+    note: "Two heaps: max-heap for lower half, min-heap for upper half."
+
+  # --- DP signals ---
+  - signal: "Number of ways / count distinct configurations"
+    patterns: [dp-1d, dp-2d, memoized-dfs]
+    confidence: high
+
+  - signal: "Min cost / max value with overlapping choices"
+    patterns: [dp-1d, dp-2d]
+    confidence: high
+
+  - signal: "Pick or skip items with capacity"
+    patterns: [dp-knapsack]
+    confidence: high
+
+  - signal: "Two strings — edit / compare / align"
+    patterns: [dp-2d]
+    confidence: high
+
+  - signal: "Recursive solution that recomputes same subproblems"
+    patterns: [memoized-dfs]
+    confidence: high
+
+  # --- String signals ---
+  - signal: "Prefix matching / autocomplete / dictionary search"
+    patterns: []
+    extra_ds: [trie]
+    confidence: high
+
+  - signal: "Anagrams / group by character signature"
+    patterns: [hashing]
+    confidence: high
+
+  - signal: "Palindrome check / generation"
+    patterns: [two-pointers, dp-2d]
+    confidence: high
+
+  # --- Bit manipulation signals ---
+  - signal: "Single element among pairs (XOR territory)"
+    patterns: [bit-manip]
+    confidence: high
+
+  - signal: "All subsets of small (≤20) set"
+    patterns: [bit-manip, backtracking]
+    confidence: high
+    note: "Bitmask is faster; backtracking is more readable."
+
+  # --- Combo signals (Hard problems) ---
+  - signal: "Word search in 2D grid"
+    patterns: [backtracking, dfs]
+    extra_ds: [trie]
+    confidence: high
+    note: "Word Search II = Trie + DFS with backtracking. Classic Hard combo."
+
+  - signal: "LRU cache"
+    patterns: []
+    extra_ds: [hashmap, doubly-linked-list, linkedhashmap]
+    confidence: high
+    note: "HashMap + DoublyLinkedList from scratch, OR LinkedHashMap shortcut."
+
+  - signal: "Design a system with O(1) operations"
+    patterns: []
+    extra_ds: [hashmap, doubly-linked-list]
+    confidence: high
+    note: "Almost always HashMap + LinkedList combo (LRU, LFU, Insert-Delete-Random)."
+
+  - signal: "K-th smallest in sorted matrix"
+    patterns: [binary-search-on-answer, heap-pattern]
+    confidence: high
+    note: "Two valid solutions; binary-search-on-answer is more elegant for matrix."

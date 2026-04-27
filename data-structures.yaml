@@ -1,0 +1,445 @@
+# =============================================================================
+# Data Structures — Senior-level reference
+# =============================================================================
+# Color tier convention for time complexity:
+#   green  = O(1), O(log n), O(α(n))
+#   yellow = O(n), O(n log n), O(L), O(V+E)
+#   orange = O(n^2), O(V^2)
+#   red    = O(2^n), O(n!), O(n*W)
+# Worst-case is tracked separately because some structures degrade
+# (e.g. HashMap O(1) avg / O(n) worst on collisions).
+# =============================================================================
+
+categories:
+  - id: linear
+    name: Linear
+    order: 1
+  - id: hash
+    name: Hash-Based
+    order: 2
+  - id: tree
+    name: Trees & Heaps
+    order: 3
+  - id: graph
+    name: Graphs
+    order: 4
+  - id: advanced
+    name: Advanced / Range Queries
+    order: 5
+
+structures:
+
+  - id: array
+    name: Array (Static)
+    category: linear
+    java: "int[], String[]"
+    operations:
+      access: "O(1)"
+      search: "O(n)"
+      insert: "O(n)"
+      delete: "O(n)"
+      append: "N/A (fixed size)"
+    space: "O(n)"
+    when_to_use:
+      - Fixed-size collections
+      - Constant-time index lookups
+      - Iteration-heavy workloads
+    senior_insight: |
+      Excellent CPU cache locality (contiguous memory). Use when read speed
+      and memory efficiency are paramount. Sized once at allocation.
+    concurrency: "Not thread-safe; external synchronization needed."
+    gotchas:
+      - "Bounds checks have small cost in Java but are JIT-optimized."
+      - "Cannot grow — pick the right size or use ArrayList."
+
+  - id: arraylist
+    name: Dynamic Array (ArrayList)
+    category: linear
+    java: "ArrayList<E>"
+    operations:
+      access: "O(1)"
+      search: "O(n)"
+      append: "O(1) amortized"
+      insert_middle: "O(n)"
+      delete_middle: "O(n)"
+    space: "O(n)"
+    when_to_use:
+      - Default choice for ordered collections
+      - Random access by index
+      - Size unknown at start
+    senior_insight: |
+      Resizing triggers an O(n) copy (typically 1.5× growth in Java). Pre-allocate
+      capacity via `new ArrayList<>(expectedSize)` if final size is roughly known
+      to avoid repeated copies and GC pressure.
+    concurrency: "Use CopyOnWriteArrayList for read-heavy or Collections.synchronizedList()."
+    gotchas:
+      - "Iterator throws ConcurrentModificationException on structural changes."
+      - "remove(int index) vs remove(Object o) — autoboxing trap with Integer."
+
+  - id: linkedlist
+    name: Linked List (Singly)
+    category: linear
+    java: "LinkedList<E> (Java's is doubly-linked, but conceptually)"
+    operations:
+      access: "O(n)"
+      search: "O(n)"
+      insert_at_known_node: "O(1)"
+      delete_at_known_node: "O(1)"
+      insert_head_tail: "O(1)"
+    space: "O(n)"
+    when_to_use:
+      - Frequent insertions/deletions at ends
+      - Implementing queues/stacks/deques manually
+      - Building blocks for LRU cache
+    senior_insight: |
+      Terrible cache locality — nodes scattered across heap. Extra memory overhead
+      per node (pointers ~16 bytes on 64-bit JVM). In practice, ArrayDeque beats
+      LinkedList for both stack and queue use cases.
+    concurrency: "Not thread-safe. ConcurrentLinkedDeque exists but rarely needed."
+    gotchas:
+      - "Java's LinkedList implements both List and Deque — but is rarely the right choice."
+      - "Don't use for random access; get(i) is O(n)."
+
+  - id: doubly-linked-list
+    name: Doubly Linked List
+    category: linear
+    java: "Custom Node class with prev/next; or LinkedList<E>"
+    operations:
+      access: "O(n)"
+      insert_at_known_node: "O(1)"
+      delete_at_known_node: "O(1)"
+      insert_remove_ends: "O(1)"
+    space: "O(n) with 2 pointers per node"
+    when_to_use:
+      - LRU cache internals (paired with HashMap)
+      - When you need O(1) removal given a node reference
+      - Bidirectional traversal
+    senior_insight: |
+      The classic LRU cache uses HashMap<K, Node> + DoublyLinkedList — the map
+      gives O(1) lookup, the DLL gives O(1) move-to-front. Be ready to code this.
+    gotchas:
+      - "Java's LinkedHashMap gives you LRU for free with accessOrder=true."
+
+  - id: stack
+    name: Stack (LIFO)
+    category: linear
+    java: "ArrayDeque<E> (NOT java.util.Stack)"
+    operations:
+      push: "O(1)"
+      pop: "O(1)"
+      peek: "O(1)"
+      search: "O(n)"
+    space: "O(n)"
+    when_to_use:
+      - Parsing (parentheses, expressions)
+      - DFS traversal (iterative)
+      - Undo/redo, function call simulation
+      - Monotonic stack pattern
+    senior_insight: |
+      NEVER use java.util.Stack — it extends Vector and is synchronized (slow)
+      and has API quirks. Always use ArrayDeque. Backed by an array, so cache-friendly.
+    concurrency: "ArrayDeque not thread-safe; use ConcurrentLinkedDeque if needed."
+
+  - id: queue
+    name: Queue (FIFO)
+    category: linear
+    java: "ArrayDeque<E> or LinkedList<E>"
+    operations:
+      offer: "O(1)"
+      poll: "O(1)"
+      peek: "O(1)"
+    space: "O(n)"
+    when_to_use:
+      - BFS traversal
+      - Task scheduling, buffering
+      - Producer-consumer pipelines
+    senior_insight: |
+      For concurrency, use ArrayBlockingQueue (bounded) over LinkedBlockingQueue
+      to prevent OOM in producer-consumer architectures.
+    concurrency: "ArrayBlockingQueue, LinkedBlockingQueue, ConcurrentLinkedQueue."
+
+  - id: deque
+    name: Deque (Double-ended Queue)
+    category: linear
+    java: "ArrayDeque<E>"
+    operations:
+      offer_first_last: "O(1)"
+      poll_first_last: "O(1)"
+      peek_first_last: "O(1)"
+    space: "O(n)"
+    when_to_use:
+      - Sliding window maximum (monotonic deque)
+      - When you need both stack and queue semantics
+      - Palindrome checking with two ends
+    senior_insight: |
+      ArrayDeque is the Swiss Army knife — use it as stack, queue, or deque.
+      Faster than LinkedList for all three.
+
+  - id: hashmap
+    name: HashMap
+    category: hash
+    java: "HashMap<K,V>"
+    operations:
+      get: "O(1) avg / O(n) worst"
+      put: "O(1) avg / O(n) worst"
+      remove: "O(1) avg / O(n) worst"
+      contains_key: "O(1) avg"
+    space: "O(n)"
+    when_to_use:
+      - Key-value lookups
+      - Frequency counting, deduplication
+      - Caching, memoization
+      - Prefix sum index storage
+    senior_insight: |
+      Worst case is O(n) on hash collisions. Java 8+ converts a bucket to a tree
+      (O(log n)) once it exceeds 8 elements — mitigates collision attacks.
+      Default load factor 0.75; resizing rehashes everything.
+    concurrency: |
+      ConcurrentHashMap (lock-striping, much better than Hashtable).
+      Hashtable is legacy — avoid. Collections.synchronizedMap wraps but locks the whole map.
+    gotchas:
+      - "Iteration order is not guaranteed (use LinkedHashMap for insertion order)."
+      - "containsKey vs get != null — the latter is wrong if null values are stored."
+
+  - id: hashset
+    name: HashSet
+    category: hash
+    java: "HashSet<E>"
+    operations:
+      add: "O(1) avg"
+      contains: "O(1) avg"
+      remove: "O(1) avg"
+    space: "O(n)"
+    when_to_use:
+      - Uniqueness checks
+      - 'Have we seen this before? patterns'
+      - Visited nodes in graph traversal
+      - Set operations (intersect, union)
+    senior_insight: |
+      Backed by a HashMap with dummy values internally. Same collision behavior
+      and worst-case as HashMap.
+    concurrency: "ConcurrentHashMap.newKeySet() for thread-safe."
+
+  - id: linkedhashmap
+    name: LinkedHashMap
+    category: hash
+    java: "LinkedHashMap<K,V>"
+    operations:
+      get: "O(1) avg"
+      put: "O(1) avg"
+      remove: "O(1) avg"
+    space: "O(n) + linked list overhead"
+    when_to_use:
+      - "Need O(1) lookup AND insertion order preserved"
+      - LRU cache (with accessOrder=true and removeEldestEntry override)
+    senior_insight: |
+      The fastest way to implement an LRU cache in Java — override removeEldestEntry.
+      Beats hand-rolled HashMap+DoublyLinkedList for most production use.
+
+  - id: treemap
+    name: TreeMap (Sorted Map)
+    category: tree
+    java: "TreeMap<K,V> (Red-Black Tree)"
+    operations:
+      get: "O(log n)"
+      put: "O(log n)"
+      remove: "O(log n)"
+      floor_ceiling: "O(log n)"
+      first_last_key: "O(log n)"
+    space: "O(n)"
+    when_to_use:
+      - Sorted keys
+      - Range queries (subMap, headMap, tailMap)
+      - 'Floor/ceiling/higher/lower lookups'
+      - Sweep line algorithms
+    senior_insight: |
+      Self-balancing (Red-Black). Stable O(log n) — never degrades like a plain BST.
+      Critical for problems like "find next greater element in a stream."
+    concurrency: "ConcurrentSkipListMap is the concurrent equivalent."
+
+  - id: treeset
+    name: TreeSet (Sorted Set)
+    category: tree
+    java: "TreeSet<E>"
+    operations:
+      add: "O(log n)"
+      contains: "O(log n)"
+      remove: "O(log n)"
+      first_last: "O(log n)"
+    space: "O(n)"
+    when_to_use:
+      - Sorted unique elements
+      - Need min/max in O(log n) with deletion
+      - Range counting / "elements between X and Y"
+    senior_insight: |
+      Backed by TreeMap. Better than HashSet when you need order or min/max ops.
+
+  - id: bst
+    name: Binary Search Tree (plain)
+    category: tree
+    java: "Custom Node class (mostly for learning/interview)"
+    operations:
+      search: "O(log n) avg / O(n) worst"
+      insert: "O(log n) avg / O(n) worst"
+      delete: "O(log n) avg / O(n) worst"
+    space: "O(n)"
+    when_to_use:
+      - Teaching/interview demonstrations
+      - When you control the input distribution
+    senior_insight: |
+      Plain BSTs degrade to a linked list O(n) on sorted input. ALWAYS clarify
+      "is this self-balancing?" when the interviewer says BST. In production
+      you'd use Red-Black (TreeMap) or AVL.
+
+  - id: heap
+    name: Heap / Priority Queue
+    category: tree
+    java: "PriorityQueue<E> (min-heap by default)"
+    operations:
+      offer: "O(log n)"
+      poll: "O(log n)"
+      peek: "O(1)"
+      contains: "O(n)"
+      build_heap: "O(n)"
+    space: "O(n)"
+    when_to_use:
+      - "Top-K problems"
+      - Dijkstra, Prim's MST
+      - Merge K sorted lists
+      - Streaming median (two heaps)
+      - Task scheduling by priority
+    senior_insight: |
+      Java's PriorityQueue is a min-heap. For max-heap: pass Collections.reverseOrder()
+      or negate values. Build-from-array is O(n), not O(n log n).
+      contains() is O(n) — never use for membership testing.
+    gotchas:
+      - "remove(Object) is O(n) — avoid in hot loops."
+      - "No update-key operation; common workaround is lazy deletion + flag."
+
+  - id: trie
+    name: Trie (Prefix Tree)
+    category: tree
+    java: "Custom TrieNode with Map<Character, TrieNode> or array[26]"
+    operations:
+      insert: "O(L) where L = key length"
+      search: "O(L)"
+      starts_with: "O(L)"
+      delete: "O(L)"
+    space: "O(N * L)"
+    when_to_use:
+      - Autocomplete, spell check
+      - Prefix matching
+      - Word search in grid (with DFS)
+      - IP routing (longest prefix match)
+    senior_insight: |
+      Memory-heavy. Use array[26] for lowercase ASCII (faster), HashMap for
+      arbitrary characters. For severe space constraints, mention Radix Trees
+      (compressed tries) or Ternary Search Trees.
+
+  - id: adj-list
+    name: Graph — Adjacency List
+    category: graph
+    java: "Map<Node, List<Node>> or List<List<Integer>>"
+    operations:
+      add_edge: "O(1)"
+      check_edge: "O(degree)"
+      iterate_neighbors: "O(degree)"
+      traverse_all: "O(V + E)"
+    space: "O(V + E)"
+    when_to_use:
+      - Sparse graphs (most real-world graphs)
+      - BFS, DFS traversal
+      - Shortest path algorithms
+    senior_insight: |
+      Default representation for almost all interview graph problems. Combine with
+      a Map<Node, List<Node>> for flexible, dynamic graph building from edge lists.
+
+  - id: adj-matrix
+    name: Graph — Adjacency Matrix
+    category: graph
+    java: "boolean[V][V] or int[V][V]"
+    operations:
+      add_edge: "O(1)"
+      check_edge: "O(1)"
+      iterate_neighbors: "O(V)"
+    space: "O(V^2)"
+    when_to_use:
+      - Dense graphs (E close to V^2)
+      - Frequent edge-existence checks
+      - Floyd-Warshall, matrix exponentiation
+    senior_insight: |
+      Wasteful for sparse graphs. Symmetric for undirected graphs (consider
+      upper-triangular). Useful when you need to do matrix math on the graph.
+
+  - id: union-find
+    name: Union-Find (Disjoint Set Union / DSU)
+    category: advanced
+    java: "int[] parent + int[] rank (path compression + union by rank)"
+    operations:
+      find: "O(α(n)) ≈ O(1)"
+      union: "O(α(n)) ≈ O(1)"
+    space: "O(n)"
+    when_to_use:
+      - Connectivity queries ("are X and Y connected?")
+      - Cycle detection in undirected graphs
+      - Kruskal's MST
+      - Number of connected components
+      - Dynamic groups (people in same team)
+    senior_insight: |
+      α(n) is the inverse Ackermann function — effectively constant. ALWAYS
+      use both path compression AND union by rank/size to get this bound.
+      Without both, it's O(log n) per op.
+
+  - id: segment-tree
+    name: Segment Tree
+    category: advanced
+    java: "int[] tree of size 4*n (for safety)"
+    operations:
+      build: "O(n)"
+      range_query: "O(log n)"
+      point_update: "O(log n)"
+      range_update: "O(log n) with lazy propagation"
+    space: "O(n)"
+    when_to_use:
+      - Range sum/min/max with updates
+      - Range modifications + range queries
+      - Competitive programming, advanced LeetCode hard
+    senior_insight: |
+      Rare in standard FAANG senior interviews but expected at staff level for
+      systems involving range queries (e.g., time-series databases). Lazy
+      propagation is the technique to know.
+
+  - id: fenwick-tree
+    name: Fenwick Tree (BIT)
+    category: advanced
+    java: "int[] tree of size n+1 (1-indexed)"
+    operations:
+      build: "O(n log n) / O(n) optimized"
+      prefix_sum: "O(log n)"
+      point_update: "O(log n)"
+    space: "O(n)"
+    when_to_use:
+      - Prefix sum with point updates
+      - Inversion count (with coordinate compression)
+      - Simpler alternative to Segment Tree for sum-only
+    senior_insight: |
+      Less powerful than Segment Tree but ~2x less code and faster constants.
+      Cannot do range min/max — only invertible operations (sum, XOR).
+
+  - id: btree
+    name: B-Tree / B+ Tree
+    category: advanced
+    java: "(System-level — rarely implemented in interviews)"
+    operations:
+      search: "O(log n)"
+      insert: "O(log n)"
+      delete: "O(log n)"
+    space: "O(n)"
+    when_to_use:
+      - Database indexing (MySQL InnoDB, PostgreSQL)
+      - Filesystems (NTFS, HFS+, ext4)
+      - Anything disk-backed where node = page
+    senior_insight: |
+      Comes up in system design, not coding rounds. Know that B+ Trees keep all
+      data in leaves with sibling pointers — perfect for range scans on disk.
+      High fan-out minimizes disk I/O. Why MongoDB and Postgres use them.

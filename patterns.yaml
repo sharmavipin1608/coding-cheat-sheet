@@ -1,0 +1,557 @@
+# =============================================================================
+# Algorithmic Patterns — Senior interview reference
+# =============================================================================
+# Each pattern has:
+#   - mental_cue: the trigger phrase you ask yourself
+#   - ds_pairings: which data structures it commonly pairs with (by id)
+#   - classic_problems: the canonical examples to recognize
+#   - gotchas: common mistakes / edge cases interviewers probe
+# =============================================================================
+
+categories:
+  - id: array-string
+    name: Array & String Patterns
+    order: 1
+  - id: search
+    name: Searching
+    order: 2
+  - id: sum-prefix
+    name: Sum & Prefix Patterns
+    order: 3
+  - id: stack-queue
+    name: Stack & Queue Patterns
+    order: 4
+  - id: graph-tree
+    name: Graph & Tree Traversal
+    order: 5
+  - id: greedy-interval
+    name: Greedy & Intervals
+    order: 6
+  - id: dp
+    name: Dynamic Programming
+    order: 7
+  - id: misc
+    name: Miscellaneous
+    order: 8
+
+patterns:
+
+  - id: two-pointers
+    name: Two Pointers
+    category: array-string
+    when_to_use:
+      - Sorted array — find pair/triplet with sum
+      - Palindrome verification
+      - Remove duplicates / partition in-place
+      - Merging sorted arrays
+    mental_cue: "Can I move left/right based on a condition?"
+    time: "O(n)"
+    space: "O(1)"
+    ds_pairings: [array, arraylist]
+    classic_problems:
+      - "Two Sum (sorted)"
+      - "3Sum / 4Sum"
+      - "Container With Most Water"
+      - "Remove Duplicates from Sorted Array"
+      - "Valid Palindrome"
+    gotchas:
+      - "Off-by-one when both pointers meet."
+      - "For 3Sum, sort first AND skip duplicates explicitly."
+
+  - id: sliding-window-fixed
+    name: Sliding Window (Fixed Size)
+    category: array-string
+    when_to_use:
+      - Subarray of exact size K
+      - Max/min/sum/avg over window of K
+    mental_cue: "I have a fixed-size window."
+    time: "O(n)"
+    space: "O(1) or O(k)"
+    ds_pairings: [array, hashmap]
+    classic_problems:
+      - "Maximum Sum Subarray of Size K"
+      - "Find All Anagrams in a String"
+      - "Permutation in String"
+    gotchas:
+      - "Initialize window before sliding (build first K, then slide)."
+
+  - id: sliding-window-dynamic
+    name: Sliding Window (Dynamic Size)
+    category: array-string
+    when_to_use:
+      - Longest/shortest substring with constraint
+      - 'At most K distinct / "exactly K distinct"'
+      - Min window containing target
+    mental_cue: "I need a running range that shrinks/grows."
+    time: "O(n)"
+    space: "O(k) for the freq map"
+    ds_pairings: [hashmap, hashset]
+    classic_problems:
+      - "Longest Substring Without Repeating Characters"
+      - "Minimum Window Substring"
+      - "Longest Substring with At Most K Distinct"
+      - "Fruit Into Baskets"
+    gotchas:
+      - "Shrink window inside a while loop, not if."
+      - "For 'exactly K', use atMost(K) - atMost(K-1) trick."
+
+  - id: fast-slow
+    name: Fast & Slow Pointers
+    category: array-string
+    when_to_use:
+      - Cycle detection (Floyd's algorithm)
+      - Find middle of linked list
+      - Detect duplicate using O(1) extra space (LC 287)
+    mental_cue: "Tortoise and hare — do I need a cycle or midpoint?"
+    time: "O(n)"
+    space: "O(1)"
+    ds_pairings: [linkedlist]
+    classic_problems:
+      - "Linked List Cycle (LC 141)"
+      - "Find the Duplicate Number (LC 287)"
+      - "Happy Number"
+      - "Middle of Linked List"
+    gotchas:
+      - "Cycle entry point: reset one pointer to head and move both at speed 1."
+
+  - id: binary-search
+    name: Binary Search
+    category: search
+    when_to_use:
+      - Sorted array
+      - 'Find first/last occurrence boundary problems'
+      - Rotated sorted array
+    mental_cue: "Can I eliminate half each step?"
+    time: "O(log n)"
+    space: "O(1)"
+    ds_pairings: [array, arraylist]
+    classic_problems:
+      - "Search Insert Position"
+      - "Find First and Last Position"
+      - "Search in Rotated Sorted Array"
+      - "Find Peak Element"
+    gotchas:
+      - "Use `mid = lo + (hi - lo) / 2` to avoid integer overflow."
+      - "lo <= hi vs lo < hi changes termination — be deliberate."
+      - "For 'first occurrence', shrink hi to mid (not mid-1)."
+
+  - id: binary-search-on-answer
+    name: Binary Search on Answer
+    category: search
+    when_to_use:
+      - 'Minimize the max / "Maximize the min"'
+      - Optimization with monotonic feasibility
+      - Capacity / threshold problems
+    mental_cue: "Can I test 'is X feasible?' in O(n) and is feasibility monotonic?"
+    time: "O(n log range)"
+    space: "O(1)"
+    ds_pairings: [array]
+    classic_problems:
+      - "Koko Eating Bananas"
+      - "Capacity to Ship Packages Within D Days"
+      - "Split Array Largest Sum"
+      - "Median of Two Sorted Arrays"
+    gotchas:
+      - "Define your search space clearly: [min_possible, max_possible]."
+      - "Write the feasibility predicate first; binary search second."
+
+  - id: prefix-sum
+    name: Prefix Sum
+    category: sum-prefix
+    when_to_use:
+      - Many range sum queries
+      - 'Subarray sum equals K — paired with HashMap'
+      - 2D range sums (prefix matrix)
+    mental_cue: "Can I precompute cumulative info?"
+    time: "O(n) preprocess, O(1) query"
+    space: "O(n)"
+    ds_pairings: [array, hashmap]
+    classic_problems:
+      - "Subarray Sum Equals K"
+      - "Range Sum Query - Immutable / 2D"
+      - "Continuous Subarray Sum"
+      - "Contiguous Array (0/1 — convert 0 to -1)"
+    gotchas:
+      - "Initialize map with {0: 1} for 'sum from start' case."
+      - "For mod problems, store prefix_sum % k as the key."
+
+  - id: difference-array
+    name: Difference Array
+    category: sum-prefix
+    when_to_use:
+      - Many range updates, one final read
+      - Range increment problems
+    mental_cue: "Lots of interval adds, one reconstruction at the end."
+    time: "O(1) per update, O(n) finalize"
+    space: "O(n)"
+    ds_pairings: [array]
+    classic_problems:
+      - "Range Addition"
+      - "Corporate Flight Bookings"
+      - "Car Pooling"
+
+  - id: hashing
+    name: Hashing / Frequency Counting
+    category: array-string
+    when_to_use:
+      - Membership / "have I seen this?"
+      - Frequency counts
+      - Complement lookup (Two Sum)
+      - Group by key (anagrams)
+    mental_cue: "Need fast lookup or counting while scanning."
+    time: "O(n)"
+    space: "O(n)"
+    ds_pairings: [hashmap, hashset]
+    classic_problems:
+      - "Two Sum"
+      - "Group Anagrams"
+      - "Top K Frequent Elements"
+      - "Longest Consecutive Sequence"
+    gotchas:
+      - "Worst case is O(n) per op on collisions — usually fine but mention it."
+
+  - id: monotonic-stack
+    name: Monotonic Stack
+    category: stack-queue
+    when_to_use:
+      - "Next greater/smaller element"
+      - Histogram / largest rectangle
+      - Span / temperature problems
+      - Trapping rainwater
+    mental_cue: "I need the nearest larger/smaller element."
+    time: "O(n)"
+    space: "O(n)"
+    ds_pairings: [stack]
+    classic_problems:
+      - "Daily Temperatures"
+      - "Next Greater Element I/II"
+      - "Largest Rectangle in Histogram"
+      - "Trapping Rain Water"
+    gotchas:
+      - "Decide: increasing or decreasing stack? Push indices, not values."
+
+  - id: monotonic-deque
+    name: Monotonic Deque
+    category: stack-queue
+    when_to_use:
+      - Sliding window max/min in O(n)
+    mental_cue: "I need the extreme of a moving window."
+    time: "O(n)"
+    space: "O(k)"
+    ds_pairings: [deque]
+    classic_problems:
+      - "Sliding Window Maximum"
+      - "Shortest Subarray with Sum at Least K"
+
+  - id: backtracking
+    name: Backtracking
+    category: misc
+    when_to_use:
+      - Generate all subsets / permutations / combinations
+      - Constraint satisfaction (N-Queens, Sudoku)
+      - Word search in grid
+      - Partition / arrangement problems
+    mental_cue: "Try a choice → recurse → undo it."
+    time: "O(2^n) or O(n!) (problem-dependent)"
+    space: "O(n) recursion depth"
+    ds_pairings: [arraylist, hashset]
+    classic_problems:
+      - "Subsets / Subsets II"
+      - "Permutations / Permutations II"
+      - "Combination Sum"
+      - "N-Queens"
+      - "Word Search"
+      - "Sudoku Solver"
+    gotchas:
+      - "Always undo the choice after recursion — that's the 'back' in backtracking."
+      - "For duplicates: sort + skip-equal-prev technique."
+
+  - id: dfs
+    name: Depth-First Search (DFS)
+    category: graph-tree
+    when_to_use:
+      - Explore deeply — connected components
+      - Tree traversal (pre/in/post-order)
+      - Path-finding (all paths)
+      - Topological sort (DFS-based)
+    mental_cue: "Explore one branch fully first."
+    time: "O(V + E)"
+    space: "O(V) — recursion stack or visited set"
+    ds_pairings: [stack, hashset]
+    classic_problems:
+      - "Number of Islands"
+      - "Path Sum / Path Sum II/III"
+      - "Clone Graph"
+      - "Course Schedule (cycle detection)"
+    gotchas:
+      - "Java recursion limit ~5000-8000 deep — convert to iterative for large inputs."
+      - "Mark visited BEFORE recursing, not after."
+
+  - id: bfs
+    name: Breadth-First Search (BFS)
+    category: graph-tree
+    when_to_use:
+      - Shortest path in unweighted graph
+      - Level-order tree traversal
+      - 'Minimum steps problems'
+      - Multi-source BFS (rotting oranges)
+    mental_cue: "Process layer by layer."
+    time: "O(V + E)"
+    space: "O(V)"
+    ds_pairings: [queue, deque, hashset]
+    classic_problems:
+      - "Binary Tree Level Order Traversal"
+      - "Word Ladder"
+      - "Rotting Oranges"
+      - "Open the Lock"
+    gotchas:
+      - "Mark visited when ENQUEUEING, not dequeuing — prevents duplicate enqueues."
+      - "Track level by snapshotting queue.size() at start of each round."
+
+  - id: topological-sort
+    name: Topological Sort
+    category: graph-tree
+    when_to_use:
+      - Dependency ordering in a DAG
+      - Build order, course schedule
+      - Detect cycle in directed graph
+    mental_cue: "Must process prerequisites before dependents."
+    time: "O(V + E)"
+    space: "O(V)"
+    ds_pairings: [adj-list, queue, hashmap]
+    classic_problems:
+      - "Course Schedule I / II"
+      - "Alien Dictionary"
+      - "Minimum Height Trees"
+    gotchas:
+      - "Two flavors: Kahn's (BFS, in-degree) or DFS-based (post-order reverse)."
+      - "If result has fewer nodes than V, there's a cycle."
+
+  - id: union-find-pattern
+    name: Union-Find Pattern
+    category: graph-tree
+    when_to_use:
+      - 'Are X and Y connected? queries'
+      - Number of connected components
+      - Detecting cycles in undirected graphs
+      - Kruskal's MST
+    mental_cue: "Are these two in the same group?"
+    time: "O(α(n)) per op ≈ O(1)"
+    space: "O(n)"
+    ds_pairings: [union-find]
+    classic_problems:
+      - "Number of Provinces"
+      - "Redundant Connection"
+      - "Accounts Merge"
+      - "Most Stones Removed with Same Row or Column"
+    gotchas:
+      - "Implement BOTH path compression and union by rank — otherwise O(log n)."
+
+  - id: greedy
+    name: Greedy
+    category: greedy-interval
+    when_to_use:
+      - Local optimal → global optimal
+      - Activity selection / interval scheduling
+      - "Pick the best available now"
+    mental_cue: "Can I commit to the locally best choice without regret?"
+    time: "Often O(n log n) due to sorting"
+    space: "O(1)"
+    ds_pairings: [array, heap]
+    classic_problems:
+      - "Jump Game I / II"
+      - "Gas Station"
+      - "Task Scheduler"
+      - "Partition Labels"
+    gotchas:
+      - "Greedy is HARD to verify — always look for a counterexample first."
+      - "If unsure, fall back to DP."
+
+  - id: interval
+    name: Interval Processing
+    category: greedy-interval
+    when_to_use:
+      - Merge overlapping intervals
+      - Insert / remove intervals
+      - Meeting rooms / scheduling
+    mental_cue: "Sort by start (or end) and sweep."
+    time: "O(n log n)"
+    space: "O(n) for output"
+    ds_pairings: [array, heap]
+    classic_problems:
+      - "Merge Intervals"
+      - "Insert Interval"
+      - "Non-overlapping Intervals"
+      - "Meeting Rooms I"
+    gotchas:
+      - "For 'minimum to remove', sort by END time, not start."
+
+  - id: sweep-line
+    name: Sweep Line
+    category: greedy-interval
+    when_to_use:
+      - Events on a timeline
+      - Max overlap / concurrent intervals
+      - Skyline problem
+    mental_cue: "Turn each interval into +1/-1 events at start/end, then scan."
+    time: "O(n log n)"
+    space: "O(n)"
+    ds_pairings: [heap, treemap]
+    classic_problems:
+      - "Meeting Rooms II"
+      - "The Skyline Problem"
+      - "Employee Free Time"
+      - "My Calendar I/II/III"
+
+  - id: heap-pattern
+    name: Heap / Top-K
+    category: misc
+    when_to_use:
+      - Top K / Bottom K elements
+      - Streaming median (two heaps)
+      - Merge K sorted lists
+      - Repeated min/max access
+    mental_cue: "I need the next best item repeatedly."
+    time: "O(n log k) for top-k; O(log n) per op"
+    space: "O(k) or O(n)"
+    ds_pairings: [heap, hashmap]
+    classic_problems:
+      - "Kth Largest Element in an Array"
+      - "Top K Frequent Elements"
+      - "Find Median from Data Stream"
+      - "Merge K Sorted Lists"
+      - "K Closest Points to Origin"
+    gotchas:
+      - "For top-K, use min-heap of size K — not max-heap of size N."
+
+  - id: dp-1d
+    name: Dynamic Programming (1D)
+    category: dp
+    when_to_use:
+      - Optimal substructure on a sequence
+      - 'Min/max ways to do X with linear state'
+      - Decision at each index based on previous
+    mental_cue: "Current answer depends on a few earlier answers."
+    time: "O(n) to O(n^2)"
+    space: "O(n) — often reducible to O(1)"
+    ds_pairings: [array]
+    classic_problems:
+      - "Climbing Stairs"
+      - "House Robber I / II"
+      - "Coin Change"
+      - "Longest Increasing Subsequence"
+      - "Word Break"
+    gotchas:
+      - "Always identify state, transition, and base case before coding."
+
+  - id: dp-2d
+    name: Dynamic Programming (2D)
+    category: dp
+    when_to_use:
+      - Two sequences (LCS, edit distance)
+      - Grid path problems
+      - Interval DP (matrix chain, palindrome partitioning)
+    mental_cue: "State depends on (i, j) — two indices or two strings."
+    time: "O(m * n)"
+    space: "O(m * n) — sometimes reducible to O(min(m,n))"
+    ds_pairings: [array]
+    classic_problems:
+      - "Edit Distance"
+      - "Longest Common Subsequence"
+      - "Unique Paths I / II"
+      - "Minimum Path Sum"
+      - "Regular Expression Matching"
+
+  - id: dp-knapsack
+    name: DP — Knapsack Family
+    category: dp
+    when_to_use:
+      - Pick or skip items with capacity
+      - Subset sum / partition problems
+      - Coin change variations
+    mental_cue: "For each item: take it or leave it."
+    time: "O(n * W)"
+    space: "O(W) — 1D rolling array"
+    ds_pairings: [array]
+    classic_problems:
+      - "Partition Equal Subset Sum"
+      - "Target Sum"
+      - "Coin Change II (combinations)"
+      - "Last Stone Weight II"
+    gotchas:
+      - "0/1 Knapsack: iterate W in reverse to avoid reusing items."
+      - "Unbounded Knapsack: iterate W forward."
+
+  - id: memoized-dfs
+    name: Memoized DFS (Top-Down DP)
+    category: dp
+    when_to_use:
+      - Recursive structure with overlapping subproblems
+      - When state space is irregular (DP tabulation awkward)
+    mental_cue: "I'm recursing and computing the same thing twice."
+    time: "Depends on state count"
+    space: "O(states)"
+    ds_pairings: [hashmap, array]
+    classic_problems:
+      - "Word Break"
+      - "Decode Ways"
+      - "Longest Increasing Path in a Matrix"
+      - "Stone Game variants"
+
+  - id: kadane
+    name: Kadane's Algorithm
+    category: dp
+    when_to_use:
+      - Maximum/minimum contiguous subarray
+      - Variants with constraints
+    mental_cue: "Best subarray ending at index i."
+    time: "O(n)"
+    space: "O(1)"
+    ds_pairings: [array]
+    classic_problems:
+      - "Maximum Subarray"
+      - "Maximum Product Subarray"
+      - "Maximum Sum Circular Subarray"
+    gotchas:
+      - "For product version, track BOTH max and min (negatives flip sign)."
+
+  - id: bit-manip
+    name: Bit Manipulation
+    category: misc
+    when_to_use:
+      - XOR tricks (single number among pairs)
+      - Bitmask DP / subset enumeration
+      - Counting bits / power of 2 checks
+      - Compact state for ≤20 elements
+    mental_cue: "Can I encode state in bits?"
+    time: "O(n) or O(2^n)"
+    space: "O(1) or O(2^n)"
+    ds_pairings: []
+    classic_problems:
+      - "Single Number I / II / III"
+      - "Counting Bits"
+      - "Subsets (bitmask enumeration)"
+      - "Power of Two"
+    gotchas:
+      - "x & (x-1) clears lowest set bit."
+      - "Use long, not int, for problems with > 32 elements."
+
+  - id: matrix-traversal
+    name: Matrix Traversal
+    category: graph-tree
+    when_to_use:
+      - Grid problems with 4/8 neighbors
+      - Flood fill, islands
+      - Spiral / diagonal traversal
+    mental_cue: "Neighbors matter — 4-dir or 8-dir?"
+    time: "O(m * n)"
+    space: "O(m * n)"
+    ds_pairings: [queue, array]
+    classic_problems:
+      - "Number of Islands"
+      - "Flood Fill"
+      - "Spiral Matrix"
+      - "Rotting Oranges"
+    gotchas:
+      - "Use a `dirs = [[0,1],[0,-1],[1,0],[-1,0]]` array — cleaner than 4 if-checks."
+      - "Modify input grid as visited marker to save space (mention tradeoff)."

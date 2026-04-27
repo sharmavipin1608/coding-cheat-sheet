@@ -1,0 +1,188 @@
+# =============================================================================
+# Pattern + Data Structure Pairings
+# =============================================================================
+# This is the senior-level layer — knowing WHICH DS to reach for inside a
+# pattern is what distinguishes mid from senior. References pattern_id and
+# ds_id from the other YAML files.
+# =============================================================================
+
+pairings:
+
+  - pattern: sliding-window-dynamic
+    structures: [hashmap, hashset, deque]
+    why: |
+      HashMap tracks character/element frequency in the window. HashSet for
+      uniqueness checks. Deque if you need to access window order (rare).
+
+  - pattern: bfs
+    structures: [queue, deque, hashset, hashmap]
+    why: |
+      Deque (as queue) for traversal frontier. HashSet for visited nodes.
+      HashMap if you need parent pointers for path reconstruction.
+
+  - pattern: dfs
+    structures: [stack, hashset, hashmap, adj-list]
+    why: |
+      Recursion stack OR explicit ArrayDeque. HashSet for visited.
+      Map<Node, List<Node>> as the standard adjacency list shape.
+
+  - pattern: topological-sort
+    structures: [adj-list, queue, hashmap]
+    why: |
+      Adjacency list for the DAG. Queue (Kahn's) for zero-indegree frontier.
+      HashMap<Node, Integer> for in-degree counts.
+
+  - pattern: union-find-pattern
+    structures: [union-find, hashmap]
+    why: |
+      DSU as the core. HashMap<String, Integer> if nodes are strings (must
+      compress to integer indices for the parent array).
+
+  - pattern: greedy
+    structures: [array, heap]
+    why: |
+      Sort first (array), or maintain "next best" via heap. Interval Scheduling
+      sorts by end-time; Task Scheduler uses heap of frequencies.
+
+  - pattern: interval
+    structures: [array, heap]
+    why: |
+      Sort by start time. For "minimum rooms," use min-heap of end times
+      (a meeting frees a room when its end ≤ current start).
+
+  - pattern: sweep-line
+    structures: [heap, treemap, array]
+    why: |
+      TreeMap to count active intervals at each event point. Heap for skyline
+      problem (max-heap of active heights).
+
+  - pattern: dp-1d
+    structures: [array, hashmap]
+    why: |
+      Array dp[i] indexed by position. HashMap if state is non-numeric
+      (e.g., word -> bool in Word Break).
+
+  - pattern: dp-2d
+    structures: [array]
+    why: |
+      2D array dp[i][j]. Often reducible to two 1D rows for O(min(m,n)) space.
+
+  - pattern: backtracking
+    structures: [arraylist, hashset]
+    why: |
+      ArrayList for current path/choice (mutable, supports undo via removeLast).
+      HashSet or boolean[] for visited tracking.
+
+  - pattern: monotonic-stack
+    structures: [stack]
+    why: |
+      ArrayDeque as stack. Push indices (not values) to compute distances.
+
+  - pattern: monotonic-deque
+    structures: [deque]
+    why: |
+      ArrayDeque as deque. Push/pop from both ends. Holds indices, never values.
+
+  - pattern: prefix-sum
+    structures: [array, hashmap]
+    why: |
+      Array of cumulative sums. HashMap<prefixSum, count or earliest index>
+      for "subarray sum equals K" type problems.
+
+  - pattern: heap-pattern
+    structures: [heap, hashmap]
+    why: |
+      PriorityQueue for the top-K. HashMap for frequency counts (Top K Frequent).
+      Two heaps for streaming median.
+
+  - pattern: hashing
+    structures: [hashmap, hashset]
+    why: |
+      HashMap for counts/lookups. HashSet for membership.
+      Always state O(n) worst-case caveat at senior level.
+
+  - pattern: two-pointers
+    structures: [array, arraylist, linkedlist]
+    why: |
+      Index pointers on arrays. For linked lists, the "two pointers" become
+      node references (also called fast-slow).
+
+  - pattern: matrix-traversal
+    structures: [queue, array]
+    why: |
+      Queue for BFS. 2D array as the grid. dirs[][] array for cleaner neighbor
+      iteration.
+
+# ---------------------------------------------------------------------------
+# Composite "designs" — multi-DS combinations the senior interviewer expects
+# ---------------------------------------------------------------------------
+
+composites:
+
+  - name: LRU Cache
+    structures: [hashmap, doubly-linked-list]
+    pattern: ~
+    explanation: |
+      HashMap<Key, Node> for O(1) lookup. DoublyLinkedList for O(1) move-to-front
+      and remove-LRU. Java shortcut: LinkedHashMap with accessOrder=true.
+    classic_problems:
+      - "LRU Cache (LC 146)"
+      - "LFU Cache (LC 460) — variant"
+
+  - name: Word Search in Grid
+    structures: [trie]
+    pattern: backtracking
+    extra_pattern: dfs
+    explanation: |
+      Trie of all target words. DFS from each cell with backtracking. Trie
+      enables prefix pruning — abandon branch the moment prefix doesn't exist.
+    classic_problems:
+      - "Word Search II (LC 212)"
+
+  - name: Streaming Median
+    structures: [heap]
+    pattern: heap-pattern
+    explanation: |
+      Max-heap of the lower half + min-heap of the upper half, kept balanced.
+      Median is top of one or average of both tops.
+    classic_problems:
+      - "Find Median from Data Stream (LC 295)"
+
+  - name: Dijkstra's Shortest Path
+    structures: [heap, hashmap, adj-list]
+    pattern: bfs
+    explanation: |
+      PriorityQueue<int[]> keyed on (distance, node). HashMap for dist[].
+      Adjacency list for the weighted graph. Skip if popped distance > known.
+    classic_problems:
+      - "Network Delay Time (LC 743)"
+      - "Cheapest Flights Within K Stops (LC 787) — Bellman-Ford variant"
+      - "Path with Minimum Effort (LC 1631)"
+
+  - name: Trie + DFS (Autocomplete)
+    structures: [trie]
+    pattern: dfs
+    explanation: |
+      Trie holds the dictionary. DFS from prefix node enumerates all completions.
+    classic_problems:
+      - "Design Search Autocomplete System (LC 642)"
+
+  - name: Insert-Delete-GetRandom O(1)
+    structures: [hashmap, arraylist]
+    pattern: ~
+    explanation: |
+      ArrayList for O(1) random access by index. HashMap<value, index> so
+      remove can swap-with-last in O(1). Classic "design with two structures".
+    classic_problems:
+      - "Insert Delete GetRandom O(1) (LC 380)"
+
+  - name: Concurrent Rate Limiter
+    structures: [queue, hashmap]
+    pattern: ~
+    explanation: |
+      Sliding window log: Queue<timestamp> per user, HashMap<userId, Queue>.
+      Discard timestamps older than window. Mention ConcurrentHashMap +
+      ConcurrentLinkedQueue for thread-safety.
+    classic_problems:
+      - "Logger Rate Limiter (LC 359)"
+      - "Hit Counter (LC 362)"
