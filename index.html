@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Senior SWE Interview Cheat-Sheet</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <nav class="topnav">
+    <div class="topnav-brand">SWE Cheat-Sheet</div>
+    <div class="tab-buttons" id="tab-buttons">
+      <button class="tab-btn active" data-tab="ds">Data Structures</button>
+      <button class="tab-btn" data-tab="patterns">Patterns</button>
+      <button class="tab-btn" data-tab="cues">Recognition Cues</button>
+      <button class="tab-btn" data-tab="pairings">Pairings</button>
+      <button class="tab-btn" data-tab="senior">Senior-Only</button>
+      <button class="tab-btn" data-tab="algo">Algorithms</button>
+      <button class="tab-btn" data-tab="java">Java</button>
+      <button class="tab-btn" data-tab="dash">Dashboard</button>
+      <button class="tab-btn tab-btn-quiz" data-tab="quiz">Quiz</button>
+    </div>
+  </nav>
+
+  <div class="controls-bar">
+    <div class="search-wrap">
+      <input type="text" id="search-input" class="search-input" placeholder="Search patterns, structures, algorithms…" autocomplete="off">
+    </div>
+    <div class="mode-controls">
+      <button class="mode-btn active" id="study-btn" title="Click rows to expand full detail">Study</button>
+      <button class="mode-btn" id="scan-btn" title="Dense read-only view">Scan</button>
+      <button class="daily-scan-btn" id="daily-scan-btn" title="Hide rows marked know-cold">Daily Scan</button>
+    </div>
+  </div>
+
+  <div class="filter-bar" id="filter-bar"></div>
+
+  <main id="main-content">
+    <div class="tab-panel active" id="panel-ds"></div>
+    <div class="tab-panel" id="panel-patterns"></div>
+    <div class="tab-panel" id="panel-cues"></div>
+    <div class="tab-panel" id="panel-pairings"></div>
+    <div class="tab-panel" id="panel-senior"></div>
+    <div class="tab-panel" id="panel-algo"></div>
+    <div class="tab-panel" id="panel-java"></div>
+    <div class="tab-panel" id="panel-dash"></div>
+    <div class="tab-panel" id="panel-quiz"></div>
+  </main>
+
+  <div id="loading" class="loading-overlay">
+    <div class="loading-box">
+      <div class="loading-text">Loading YAML data…</div>
+      <div class="loading-sub">Serve via HTTP — file:// protocol won't work</div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+  <script src="utils.js"></script>
+  <script src="render.js"></script>
+  <script src="quiz.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,118 +1,1883 @@
 # =============================================================================
-# Problems — Quiz seed data
-# =============================================================================
-# Each problem is tagged with primary patterns and required data structures.
-# For Easy/Medium: usually 1 pattern. For Hard: 1-3 patterns + composite DS.
-#
-# This file starts small (10 examples). Plan to backfill from NeetCode 150 /
-# Blind 75 — both have curated lists with pattern tags freely available.
-#
-# References: pattern_id from patterns.yaml, ds_id from data-structures.yaml
+# Problems — NeetCode 150 + extras
 # =============================================================================
 
 problems:
+- id: lc-217
+  name: Contains Duplicate
+  leetcode_num: 217
+  difficulty: Easy
+  patterns:
+  - hashing
+  structures:
+  - hashset
+  blurb: 'HashSet membership check as you scan. Return true on first duplicate. O(n) time, O(n) space.
 
-  - id: lc-1
-    name: "Two Sum"
-    leetcode_num: 1
-    difficulty: Easy
-    patterns: [hashing]
-    structures: [hashmap]
-    blurb: |
-      Find indices of two numbers that sum to target. HashMap of complement
-      lookups in one pass. The canonical hashing problem.
+    '
+- id: lc-242
+  name: Valid Anagram
+  leetcode_num: 242
+  difficulty: Easy
+  patterns:
+  - hashing
+  structures:
+  - hashmap
+  blurb: 'Frequency count of s, then decrement for t. Any non-zero count means not an anagram. Or sort
+    both strings.
 
-  - id: lc-3
-    name: "Longest Substring Without Repeating Characters"
-    leetcode_num: 3
-    difficulty: Medium
-    patterns: [sliding-window-dynamic]
-    structures: [hashmap, hashset]
-    blurb: |
-      Expand window, shrink when duplicate appears.
+    '
+- id: lc-1
+  name: Two Sum
+  leetcode_num: 1
+  difficulty: Easy
+  patterns:
+  - hashing
+  structures:
+  - hashmap
+  blurb: 'One-pass HashMap: store complement → index. When you see the complement, return both indices.
+    O(n) time, O(n) space.
 
-  - id: lc-15
-    name: "3Sum"
-    leetcode_num: 15
-    difficulty: Medium
-    patterns: [two-pointers]
-    structures: [array]
-    blurb: |
-      Sort, fix one element, two-pointer the rest. Skip duplicates carefully.
+    '
+- id: lc-49
+  name: Group Anagrams
+  leetcode_num: 49
+  difficulty: Medium
+  patterns:
+  - hashing
+  structures:
+  - hashmap
+  blurb: 'Key = sorted string (or char frequency tuple). Group all words with the same key into a list.
+    O(n * k log k).
 
-  - id: lc-42
-    name: "Trapping Rain Water"
-    leetcode_num: 42
-    difficulty: Hard
-    patterns: [two-pointers, monotonic-stack, dp-1d]
-    structures: [array, stack]
-    blurb: |
-      Three valid solutions. Two pointers is most space-efficient.
-      Monotonic stack version is the cleanest. DP precomputes left/right max.
+    '
+- id: lc-347
+  name: Top K Frequent Elements
+  leetcode_num: 347
+  difficulty: Medium
+  patterns:
+  - heap-pattern
+  - hashing
+  structures:
+  - heap
+  - hashmap
+  blurb: 'Frequency map, then min-heap of size k on frequency. Poll when size exceeds k. Bucket sort alternative
+    is O(n).
 
-  - id: lc-76
-    name: "Minimum Window Substring"
-    leetcode_num: 76
-    difficulty: Hard
-    patterns: [sliding-window-dynamic]
-    structures: [hashmap]
-    blurb: |
-      Expand to satisfy, then shrink to optimize. Track count of "needed" chars.
+    '
+- id: lc-238
+  name: Product of Array Except Self
+  leetcode_num: 238
+  difficulty: Medium
+  patterns:
+  - prefix-sum
+  structures:
+  - array
+  blurb: 'Two passes: left prefix products, then right suffix products multiplied in. O(n) time, O(1)
+    extra space (output array doesn''t count).
 
-  - id: lc-146
-    name: "LRU Cache"
-    leetcode_num: 146
-    difficulty: Medium
-    patterns: []
-    structures: [hashmap, doubly-linked-list]
-    composite: "LRU Cache"
-    blurb: |
-      HashMap + Doubly Linked List for O(1) get/put. Or LinkedHashMap shortcut.
+    '
+- id: lc-36
+  name: Valid Sudoku
+  leetcode_num: 36
+  difficulty: Medium
+  patterns:
+  - hashing
+  structures:
+  - hashset
+  blurb: 'Use HashSets for each row, column, and 3×3 box. Encode box index as (row/3)*3 + col/3. On duplicate
+    → invalid.
 
-  - id: lc-200
-    name: "Number of Islands"
-    leetcode_num: 200
-    difficulty: Medium
-    patterns: [dfs, bfs, matrix-traversal, union-find-pattern]
-    structures: [array]
-    blurb: |
-      Three valid approaches. DFS is shortest. Union-Find is overkill but valid.
+    '
+- id: lc-271
+  name: Encode and Decode Strings
+  leetcode_num: 271
+  difficulty: Medium
+  patterns:
+  - hashing
+  structures:
+  - array
+  blurb: 'Prefix each string with its length and a delimiter (''4#neet''). Decode by reading the length
+    prefix, skip ''#'', read that many chars.
 
-  - id: lc-207
-    name: "Course Schedule"
-    leetcode_num: 207
-    difficulty: Medium
-    patterns: [topological-sort]
-    structures: [adj-list, queue, hashmap]
-    blurb: |
-      Detect cycle in directed graph. Kahn's algorithm with in-degree queue.
+    '
+- id: lc-128
+  name: Longest Consecutive Sequence
+  leetcode_num: 128
+  difficulty: Medium
+  patterns:
+  - hashing
+  structures:
+  - hashset
+  blurb: 'Load all numbers into a HashSet. For each number that has no left neighbor (n-1 not in set),
+    count the streak forward. O(n).
 
-  - id: lc-212
-    name: "Word Search II"
-    leetcode_num: 212
-    difficulty: Hard
-    patterns: [backtracking, dfs]
-    structures: [trie]
-    composite: "Word Search in Grid"
-    blurb: |
-      Trie + DFS with backtracking. Trie enables prefix pruning — without it,
-      naive search is O(words * cells * 4^L) and TLEs.
+    '
+- id: lc-125
+  name: Valid Palindrome
+  leetcode_num: 125
+  difficulty: Easy
+  patterns:
+  - two-pointers
+  structures:
+  - array
+  blurb: 'Left/right pointers. Skip non-alphanumeric characters. Compare lowercased chars. O(n) time,
+    O(1) space.
 
-  - id: lc-295
-    name: "Find Median from Data Stream"
-    leetcode_num: 295
-    difficulty: Hard
-    patterns: [heap-pattern]
-    structures: [heap]
-    composite: "Streaming Median"
-    blurb: |
-      Two heaps, balanced. addNum O(log n), findMedian O(1).
+    '
+- id: lc-167
+  name: Two Sum II Input Array Is Sorted
+  leetcode_num: 167
+  difficulty: Medium
+  patterns:
+  - two-pointers
+  structures:
+  - array
+  blurb: 'Sorted array so left/right pointers work. Move left right if sum < target, move right left if
+    sum > target. O(n).
 
-# =============================================================================
-# TODO: Backfill from
-#   - https://github.com/neetcode-gh/leetcode (NeetCode 150 — already tagged)
-#   - https://www.teamblind.com/post/Blind-75-LeetCode-Questions-OaM1orEU
-#
-# Suggested first batch: 50 mediums covering every pattern at least twice.
-# Then 25 hards focused on composites (Trie+DFS, two heaps, Dijkstra, etc.)
-# =============================================================================
+    '
+- id: lc-15
+  name: 3Sum
+  leetcode_num: 15
+  difficulty: Medium
+  patterns:
+  - two-pointers
+  structures:
+  - array
+  blurb: 'Sort first. Fix one element, two-pointer the rest. Skip duplicate values at both the outer and
+    inner levels.
+
+    '
+- id: lc-11
+  name: Container With Most Water
+  leetcode_num: 11
+  difficulty: Medium
+  patterns:
+  - two-pointers
+  structures:
+  - array
+  blurb: 'Left/right pointers. Area = min(h[l], h[r]) * (r - l). Move the shorter side inward — moving
+    the taller side can only decrease area.
+
+    '
+- id: lc-42
+  name: Trapping Rain Water
+  leetcode_num: 42
+  difficulty: Hard
+  patterns:
+  - two-pointers
+  - monotonic-stack
+  - dp-1d
+  structures:
+  - array
+  - stack
+  blurb: 'Three valid approaches. Two pointers: move the shorter side inward, water at each step = min(maxL,
+    maxR) - height. Monotonic stack: compute water per layer when a taller wall is found. DP: precompute
+    leftMax[] and rightMax[].
+
+    '
+- id: lc-121
+  name: Best Time to Buy And Sell Stock
+  leetcode_num: 121
+  difficulty: Easy
+  patterns:
+  - kadane
+  structures:
+  - array
+  blurb: 'Track running minimum price. At each day, profit = price - minSoFar. Kadane variant: max gain
+    on a single transaction.
+
+    '
+- id: lc-3
+  name: Longest Substring Without Repeating Characters
+  leetcode_num: 3
+  difficulty: Medium
+  patterns:
+  - sliding-window-dynamic
+  structures:
+  - hashmap
+  blurb: 'Expand window; shrink from left when a duplicate enters. HashMap tracks last seen index of each
+    char for O(1) jump.
+
+    '
+- id: lc-424
+  name: Longest Repeating Character Replacement
+  leetcode_num: 424
+  difficulty: Medium
+  patterns:
+  - sliding-window-dynamic
+  structures:
+  - hashmap
+  blurb: 'Track max frequency char in window. Window valid when (size - maxFreq) ≤ k. Shrink from left
+    when invalid. Max window seen is the answer.
+
+    '
+- id: lc-567
+  name: Permutation In String
+  leetcode_num: 567
+  difficulty: Medium
+  patterns:
+  - sliding-window-fixed
+  structures:
+  - hashmap
+  - array
+  blurb: 'Fixed window of len(s1). Compare char frequency arrays. Use a 26-int array and a match counter:
+    increment match when freq equals target, decrement when it drops below.
+
+    '
+- id: lc-76
+  name: Minimum Window Substring
+  leetcode_num: 76
+  difficulty: Hard
+  patterns:
+  - sliding-window-dynamic
+  structures:
+  - hashmap
+  blurb: 'Expand to satisfy all required chars, shrink from left to minimize. Track ''formed'' count vs
+    ''required''. O(|s| + |t|).
+
+    '
+- id: lc-239
+  name: Sliding Window Maximum
+  leetcode_num: 239
+  difficulty: Hard
+  patterns:
+  - monotonic-deque
+  structures:
+  - deque
+  blurb: 'Monotonic decreasing deque of indices. Remove out-of-window indices from front. Remove smaller
+    elements from back before inserting. Front is always the window max.
+
+    '
+- id: lc-20
+  name: Valid Parentheses
+  leetcode_num: 20
+  difficulty: Easy
+  patterns:
+  - monotonic-stack
+  structures:
+  - stack
+  blurb: 'Push opening brackets. On closing bracket, check top matches. Return true only if stack is empty
+    at the end.
+
+    '
+- id: lc-155
+  name: Min Stack
+  leetcode_num: 155
+  difficulty: Medium
+  patterns:
+  - monotonic-stack
+  structures:
+  - stack
+  blurb: 'Two stacks: main stack + min-tracker stack. Push to min-stack only when new value ≤ current
+    min. O(1) all ops.
+
+    '
+- id: lc-150
+  name: Evaluate Reverse Polish Notation
+  leetcode_num: 150
+  difficulty: Medium
+  patterns:
+  - monotonic-stack
+  structures:
+  - stack
+  blurb: 'Push numbers. On operator, pop two operands, compute, push result. Handle division truncating
+    toward zero.
+
+    '
+- id: lc-22
+  name: Generate Parentheses
+  leetcode_num: 22
+  difficulty: Medium
+  patterns:
+  - backtracking
+  structures:
+  - arraylist
+  blurb: 'Add ''('' if open count < n. Add '')'' if close count < open count. Recurse. Valid string when
+    both counts equal n.
+
+    '
+- id: lc-739
+  name: Daily Temperatures
+  leetcode_num: 739
+  difficulty: Medium
+  patterns:
+  - monotonic-stack
+  structures:
+  - stack
+  blurb: 'Monotonic decreasing stack of indices. When current temp > temps[stack.top()], pop and compute
+    wait days = i - popped_index.
+
+    '
+- id: lc-853
+  name: Car Fleet
+  leetcode_num: 853
+  difficulty: Medium
+  patterns:
+  - monotonic-stack
+  structures:
+  - array
+  blurb: 'Sort by position descending (closest to target first). Compute time = (target-pos)/speed. If
+    current time ≤ last fleet time, same fleet. Count distinct fleet times.
+
+    '
+- id: lc-84
+  name: Largest Rectangle In Histogram
+  leetcode_num: 84
+  difficulty: Hard
+  patterns:
+  - monotonic-stack
+  structures:
+  - stack
+  blurb: 'Monotonic increasing stack of indices. On each pop, width = i - stack.peek() - 1 (or i if stack
+    empty). Append height 0 sentinel.
+
+    '
+- id: lc-704
+  name: Binary Search
+  leetcode_num: 704
+  difficulty: Easy
+  patterns:
+  - binary-search
+  structures:
+  - array
+  blurb: 'Classic lo/hi with mid = lo + (hi-lo)/2. Adjust bounds based on comparison. O(log n).
+
+    '
+- id: lc-74
+  name: Search a 2D Matrix
+  leetcode_num: 74
+  difficulty: Medium
+  patterns:
+  - binary-search
+  structures:
+  - array
+  blurb: 'Treat m×n matrix as a flat sorted array of length m*n. Binary search: row = mid/n, col = mid%n.
+    O(log(m*n)).
+
+    '
+- id: lc-875
+  name: Koko Eating Bananas
+  leetcode_num: 875
+  difficulty: Medium
+  patterns:
+  - binary-search-on-answer
+  structures:
+  - array
+  blurb: 'Binary search on eating speed k in [1, max(piles)]. Feasibility check: can Koko finish all piles
+    in h hours at speed k? O(n log max).
+
+    '
+- id: lc-153
+  name: Find Minimum In Rotated Sorted Array
+  leetcode_num: 153
+  difficulty: Medium
+  patterns:
+  - binary-search
+  structures:
+  - array
+  blurb: 'If nums[mid] > nums[hi], the min is in the right half. Otherwise it''s in the left half (including
+    mid). Shrink accordingly.
+
+    '
+- id: lc-33
+  name: Search In Rotated Sorted Array
+  leetcode_num: 33
+  difficulty: Medium
+  patterns:
+  - binary-search
+  structures:
+  - array
+  blurb: 'At mid, determine which half is sorted. Check if target falls in the sorted half; if yes narrow
+    there, else the other side.
+
+    '
+- id: lc-981
+  name: Time Based Key Value Store
+  leetcode_num: 981
+  difficulty: Medium
+  patterns:
+  - binary-search
+  structures:
+  - treemap
+  blurb: 'Map<String, List<int[]>> with (timestamp, value) pairs per key. On get: binary search the list
+    for the largest timestamp ≤ given time.
+
+    '
+- id: lc-4
+  name: Median of Two Sorted Arrays
+  leetcode_num: 4
+  difficulty: Hard
+  patterns:
+  - binary-search-on-answer
+  structures:
+  - array
+  blurb: 'Binary search on partition point of the smaller array. Ensure left halves across both arrays
+    are ≤ right halves. O(log min(m,n)).
+
+    '
+- id: lc-206
+  name: Reverse Linked List
+  leetcode_num: 206
+  difficulty: Easy
+  patterns:
+  - two-pointers
+  structures:
+  - linkedlist
+  blurb: 'Three pointers: prev, curr, next. Iteratively reverse the next pointer. Return prev as the new
+    head.
+
+    '
+- id: lc-21
+  name: Merge Two Sorted Lists
+  leetcode_num: 21
+  difficulty: Easy
+  patterns:
+  - two-pointers
+  structures:
+  - linkedlist
+  blurb: 'Two pointers on both lists. Pick the smaller head, advance that pointer. Use a dummy head to
+    simplify edge cases.
+
+    '
+- id: lc-143
+  name: Reorder List
+  leetcode_num: 143
+  difficulty: Medium
+  patterns:
+  - fast-slow
+  structures:
+  - linkedlist
+  blurb: 'Find mid with fast/slow. Reverse the second half. Merge the two halves by interleaving nodes.
+
+    '
+- id: lc-19
+  name: Remove Nth Node From End of List
+  leetcode_num: 19
+  difficulty: Medium
+  patterns:
+  - fast-slow
+  structures:
+  - linkedlist
+  blurb: 'Fast pointer advances N+1 steps ahead. Move both until fast reaches null. Slow is now at the
+    node before the target.
+
+    '
+- id: lc-138
+  name: Copy List With Random Pointer
+  leetcode_num: 138
+  difficulty: Medium
+  patterns:
+  - hashing
+  structures:
+  - hashmap
+  - linkedlist
+  blurb: 'HashMap<OldNode, NewNode>. First pass: create all copy nodes. Second pass: wire next and random
+    pointers using the map.
+
+    '
+- id: lc-2
+  name: Add Two Numbers
+  leetcode_num: 2
+  difficulty: Medium
+  patterns:
+  - two-pointers
+  structures:
+  - linkedlist
+  blurb: 'Simulate addition with a carry variable. Traverse both lists simultaneously advancing each pointer.
+    Handle leftover carry at the end.
+
+    '
+- id: lc-141
+  name: Linked List Cycle
+  leetcode_num: 141
+  difficulty: Easy
+  patterns:
+  - fast-slow
+  structures:
+  - linkedlist
+  blurb: 'Floyd''s tortoise and hare. Fast moves 2 steps, slow moves 1. They meet if and only if a cycle
+    exists.
+
+    '
+- id: lc-287
+  name: Find The Duplicate Number
+  leetcode_num: 287
+  difficulty: Medium
+  patterns:
+  - fast-slow
+  structures:
+  - array
+  blurb: 'Treat array values as next-pointers — it has a cycle (Floyd''s). Fast/slow meet in cycle. Reset
+    one pointer to start, walk both at speed 1 to find cycle entry = duplicate.
+
+    '
+- id: lc-146
+  name: LRU Cache
+  leetcode_num: 146
+  difficulty: Medium
+  patterns: []
+  structures:
+  - hashmap
+  - doubly-linked-list
+  blurb: 'HashMap<Key, Node> for O(1) lookup. DoublyLinkedList for O(1) move-to-front (get) and O(1) remove-LRU
+    (tail). Java shortcut: LinkedHashMap with accessOrder=true.
+
+    '
+  composite: LRU Cache
+- id: lc-23
+  name: Merge K Sorted Lists
+  leetcode_num: 23
+  difficulty: Hard
+  patterns:
+  - heap-pattern
+  structures:
+  - heap
+  - linkedlist
+  blurb: 'Min-heap of (value, list_index, node). Poll minimum, push its next node. O(n log k) where k
+    = number of lists.
+
+    '
+- id: lc-25
+  name: Reverse Nodes In K Group
+  leetcode_num: 25
+  difficulty: Hard
+  patterns:
+  - two-pointers
+  structures:
+  - linkedlist
+  blurb: 'Find the k-th node ahead with a pointer. Reverse the k-node sublist in-place. Reconnect with
+    prev group tail and next group head. O(n).
+
+    '
+- id: lc-226
+  name: Invert Binary Tree
+  leetcode_num: 226
+  difficulty: Easy
+  patterns:
+  - dfs
+  structures:
+  - stack
+  blurb: 'Post-order DFS: swap left and right children after recursing into both. Two lines recursively.
+
+    '
+- id: lc-104
+  name: Maximum Depth of Binary Tree
+  leetcode_num: 104
+  difficulty: Easy
+  patterns:
+  - dfs
+  structures:
+  - stack
+  blurb: 'Post-order DFS: depth = 1 + max(left, right). Iterative BFS counting levels is equally valid.
+
+    '
+- id: lc-543
+  name: Diameter of Binary Tree
+  leetcode_num: 543
+  difficulty: Easy
+  patterns:
+  - dfs
+  structures:
+  - stack
+  blurb: 'Post-order DFS returning height. At each node, candidate diameter = left_height + right_height.
+    Track global max.
+
+    '
+- id: lc-110
+  name: Balanced Binary Tree
+  leetcode_num: 110
+  difficulty: Easy
+  patterns:
+  - dfs
+  structures: []
+  blurb: 'Post-order DFS returning height. If |leftHeight - rightHeight| > 1, return -1 (unbalanced).
+    Propagate -1 upward immediately.
+
+    '
+- id: lc-100
+  name: Same Tree
+  leetcode_num: 100
+  difficulty: Easy
+  patterns:
+  - dfs
+  structures: []
+  blurb: 'Recursive: both null → true. One null or values differ → false. Recurse left and right subtrees.
+    O(n).
+
+    '
+- id: lc-572
+  name: Subtree of Another Tree
+  leetcode_num: 572
+  difficulty: Easy
+  patterns:
+  - dfs
+  structures: []
+  blurb: 'For each node in the main tree, call isSameTree. If any match found return true. O(m*n) worst
+    case.
+
+    '
+- id: lc-235
+  name: Lowest Common Ancestor of a Binary Search Tree
+  leetcode_num: 235
+  difficulty: Medium
+  patterns:
+  - dfs
+  structures: []
+  blurb: 'Use BST property. If both p and q < root, recurse left. If both > root, recurse right. Otherwise
+    current root is the LCA.
+
+    '
+- id: lc-102
+  name: Binary Tree Level Order Traversal
+  leetcode_num: 102
+  difficulty: Medium
+  patterns:
+  - bfs
+  structures:
+  - queue
+  blurb: 'BFS with level snapshots. Capture queue.size() at the start of each level to know how many nodes
+    belong to that level.
+
+    '
+- id: lc-199
+  name: Binary Tree Right Side View
+  leetcode_num: 199
+  difficulty: Medium
+  patterns:
+  - bfs
+  structures:
+  - queue
+  blurb: 'BFS level by level. The last node dequeued in each level is the rightmost visible node. O(n).
+
+    '
+- id: lc-1448
+  name: Count Good Nodes In Binary Tree
+  leetcode_num: 1448
+  difficulty: Medium
+  patterns:
+  - dfs
+  structures: []
+  blurb: 'DFS tracking max value seen on path from root. Node is ''good'' if node.val ≥ maxOnPath. Count
+    good nodes.
+
+    '
+- id: lc-98
+  name: Validate Binary Search Tree
+  leetcode_num: 98
+  difficulty: Medium
+  patterns:
+  - dfs
+  structures: []
+  blurb: 'DFS with valid range (min, max). Left child must be < current, right child > current. Propagate
+    bounds down. O(n).
+
+    '
+- id: lc-230
+  name: Kth Smallest Element In a Bst
+  leetcode_num: 230
+  difficulty: Medium
+  patterns:
+  - dfs
+  structures: []
+  blurb: 'In-order traversal (left → root → right) of a BST yields sorted order. The k-th node visited
+    is the answer.
+
+    '
+- id: lc-105
+  name: Construct Binary Tree From Preorder And Inorder Traversal
+  leetcode_num: 105
+  difficulty: Medium
+  patterns:
+  - dfs
+  structures:
+  - hashmap
+  blurb: 'preorder[0] is always the root. Find its index in inorder (O(1) with HashMap) to split left/right
+    subtrees. Recurse.
+
+    '
+- id: lc-124
+  name: Binary Tree Maximum Path Sum
+  leetcode_num: 124
+  difficulty: Hard
+  patterns:
+  - dfs
+  structures:
+  - stack
+  blurb: 'Post-order DFS returning max one-sided path gain. At each node, candidate = left + right + node.val.
+    Update global max, return node.val + max(left, right, 0).
+
+    '
+- id: lc-297
+  name: Serialize And Deserialize Binary Tree
+  leetcode_num: 297
+  difficulty: Hard
+  patterns:
+  - bfs
+  structures:
+  - queue
+  blurb: 'BFS serialize: level order with null markers. Deserialize: replay BFS using a queue of parent
+    nodes. Assign children in order.
+
+    '
+- id: lc-208
+  name: Implement Trie Prefix Tree
+  leetcode_num: 208
+  difficulty: Medium
+  patterns: []
+  structures:
+  - trie
+  blurb: 'TrieNode with children[26] and isEnd flag. Insert: walk/create nodes per char. Search: walk
+    nodes, check isEnd. StartsWith: walk nodes, return true if path exists.
+
+    '
+- id: lc-211
+  name: Design Add And Search Words Data Structure
+  leetcode_num: 211
+  difficulty: Medium
+  patterns:
+  - backtracking
+  structures:
+  - trie
+  blurb: 'Trie for storage. Search with ''.'' wildcard: try all 26 children recursively via backtracking.
+    Regular chars navigate the trie normally.
+
+    '
+- id: lc-212
+  name: Word Search II
+  leetcode_num: 212
+  difficulty: Hard
+  patterns:
+  - backtracking
+  - dfs
+  structures:
+  - trie
+  blurb: 'Build Trie from word list. DFS from every cell with backtracking. Trie prefix pruning eliminates
+    dead branches early — critical for passing time limit.
+
+    '
+  composite: Word Search in Grid
+- id: lc-703
+  name: Kth Largest Element In a Stream
+  leetcode_num: 703
+  difficulty: Easy
+  patterns:
+  - heap-pattern
+  structures:
+  - heap
+  blurb: 'Min-heap of size k. On each add: push element, if size exceeds k pop the minimum. Heap top is
+    always the k-th largest.
+
+    '
+- id: lc-1046
+  name: Last Stone Weight
+  leetcode_num: 1046
+  difficulty: Easy
+  patterns:
+  - heap-pattern
+  structures:
+  - heap
+  blurb: 'Max-heap. Each round pop the two largest, push their difference if nonzero. Continue until ≤
+    1 stone remains.
+
+    '
+- id: lc-973
+  name: K Closest Points to Origin
+  leetcode_num: 973
+  difficulty: Medium
+  patterns:
+  - heap-pattern
+  structures:
+  - heap
+  blurb: 'Max-heap of size k by Euclidean distance. Pop if size exceeds k. Remaining k elements are the
+    closest. Alternatively sort all by distance.
+
+    '
+- id: lc-215
+  name: Kth Largest Element In An Array
+  leetcode_num: 215
+  difficulty: Medium
+  patterns:
+  - heap-pattern
+  structures:
+  - heap
+  blurb: 'Min-heap of size k. Push each element; if heap exceeds k, poll the min. The heap top is the
+    kth largest. O(n log k).
+
+    '
+- id: lc-621
+  name: Task Scheduler
+  leetcode_num: 621
+  difficulty: Medium
+  patterns:
+  - greedy
+  - heap-pattern
+  structures:
+  - heap
+  - hashmap
+  blurb: 'Greedy: always execute the most frequent remaining task. Max-heap of frequencies. Cool-down
+    of n slots between same tasks. Formula: (maxFreq-1)*(n+1) + countOfMaxFreq.
+
+    '
+- id: lc-355
+  name: Design Twitter
+  leetcode_num: 355
+  difficulty: Medium
+  patterns:
+  - heap-pattern
+  structures:
+  - heap
+  - hashmap
+  - hashset
+  blurb: 'HashMap<userId, List<tweet>> sorted by timestamp. Follow/unfollow via HashSet per user. getNewsFeed:
+    merge top 10 tweets from followees with a min-heap.
+
+    '
+- id: lc-295
+  name: Find Median From Data Stream
+  leetcode_num: 295
+  difficulty: Hard
+  patterns:
+  - heap-pattern
+  structures:
+  - heap
+  blurb: 'Max-heap (lower half) + min-heap (upper half). Keep size difference ≤ 1. Median = top of larger
+    heap or average of both tops.
+
+    '
+  composite: Streaming Median
+- id: lc-78
+  name: Subsets
+  leetcode_num: 78
+  difficulty: Medium
+  patterns:
+  - backtracking
+  - bit-manip
+  structures:
+  - arraylist
+  blurb: 'Backtracking: at each index, choose include or exclude. Bitmask: iterate 0 to 2^n-1, include
+    element i if bit i is set.
+
+    '
+- id: lc-39
+  name: Combination Sum
+  leetcode_num: 39
+  difficulty: Medium
+  patterns:
+  - backtracking
+  structures:
+  - arraylist
+  blurb: 'DFS with remaining target. Reuse elements by not incrementing start index. Prune when remaining
+    < 0.
+
+    '
+- id: lc-46
+  name: Permutations
+  leetcode_num: 46
+  difficulty: Medium
+  patterns:
+  - backtracking
+  structures:
+  - arraylist
+  - hashset
+  blurb: 'At each step, pick any unused element. Boolean visited[] or in-place swap tracks usage. Undo
+    (backtrack) after each recursive call.
+
+    '
+- id: lc-90
+  name: Subsets II
+  leetcode_num: 90
+  difficulty: Medium
+  patterns:
+  - backtracking
+  structures:
+  - arraylist
+  blurb: 'Sort first. In backtracking, skip element at position i if nums[i] == nums[i-1] and i > start
+    (same recursion level). Prevents duplicate subsets.
+
+    '
+- id: lc-40
+  name: Combination Sum II
+  leetcode_num: 40
+  difficulty: Medium
+  patterns:
+  - backtracking
+  structures:
+  - arraylist
+  blurb: 'Sort first. Each candidate usable at most once — pass i+1 to next call. Skip duplicates at same
+    recursion level (same as Subsets II).
+
+    '
+- id: lc-79
+  name: Word Search
+  leetcode_num: 79
+  difficulty: Medium
+  patterns:
+  - backtracking
+  structures:
+  - array
+  blurb: 'DFS from each cell matching word[0]. Mark visited by temporarily modifying grid. Restore on
+    backtrack. Prune when remaining word length > available cells.
+
+    '
+- id: lc-131
+  name: Palindrome Partitioning
+  leetcode_num: 131
+  difficulty: Medium
+  patterns:
+  - backtracking
+  structures:
+  - arraylist
+  blurb: 'Backtrack: for each prefix that is a palindrome, recurse on the suffix. Precompute isPalindrome[i][j]
+    with DP to avoid repeated checks.
+
+    '
+- id: lc-17
+  name: Letter Combinations of a Phone Number
+  leetcode_num: 17
+  difficulty: Medium
+  patterns:
+  - backtracking
+  structures:
+  - arraylist
+  blurb: 'Map each digit to its letters (e.g. ''2'' → abc). Backtrack: at each position pick one letter
+    from current digit''s options, recurse on remaining digits.
+
+    '
+- id: lc-51
+  name: N Queens
+  leetcode_num: 51
+  difficulty: Hard
+  patterns:
+  - backtracking
+  structures:
+  - arraylist
+  - hashset
+  blurb: 'Place queens row by row. Track columns, diagonals (r-c), and anti-diagonals (r+c) in three HashSets.
+    Backtrack on conflict.
+
+    '
+- id: lc-200
+  name: Number of Islands
+  leetcode_num: 200
+  difficulty: Medium
+  patterns:
+  - matrix-traversal
+  - dfs
+  structures:
+  - array
+  - hashset
+  blurb: 'DFS/BFS from each unvisited ''1''. Mark all connected land as visited. Count how many times
+    you start a traversal.
+
+    '
+- id: lc-133
+  name: Clone Graph
+  leetcode_num: 133
+  difficulty: Medium
+  patterns:
+  - dfs
+  structures:
+  - hashmap
+  blurb: 'DFS/BFS with HashMap<OldNode, NewNode>. Create clone on first visit, recurse to clone all neighbors.
+    Handles cycles via the map.
+
+    '
+- id: lc-695
+  name: Max Area of Island
+  leetcode_num: 695
+  difficulty: Medium
+  patterns:
+  - matrix-traversal
+  - dfs
+  structures:
+  - array
+  blurb: 'DFS from each unvisited ''1''. Mark visited, count cells recursively. Track and return the maximum
+    area found.
+
+    '
+- id: lc-417
+  name: Pacific Atlantic Water Flow
+  leetcode_num: 417
+  difficulty: Medium
+  patterns:
+  - matrix-traversal
+  - dfs
+  structures:
+  - array
+  - hashset
+  blurb: 'Reverse DFS from both coastlines simultaneously (water flows uphill in reverse). Cells reachable
+    from both are the answer.
+
+    '
+- id: lc-130
+  name: Surrounded Regions
+  leetcode_num: 130
+  difficulty: Medium
+  patterns:
+  - matrix-traversal
+  - dfs
+  structures:
+  - array
+  blurb: 'DFS from all border ''O''s, mark them safe. Then flip all remaining ''O''s to ''X''. Restore
+    safe markers back to ''O''.
+
+    '
+- id: lc-994
+  name: Rotting Oranges
+  leetcode_num: 994
+  difficulty: Medium
+  patterns:
+  - matrix-traversal
+  - bfs
+  structures:
+  - queue
+  - array
+  blurb: 'Multi-source BFS from all initially rotten oranges simultaneously. Count minutes until no fresh
+    orange reachable. Check for unreachable fresh oranges.
+
+    '
+- id: lc-286
+  name: Walls And Gates
+  leetcode_num: 286
+  difficulty: Medium
+  patterns:
+  - matrix-traversal
+  - bfs
+  structures:
+  - queue
+  - array
+  blurb: 'Multi-source BFS from all gates (0) simultaneously. Propagate distances outward. Empty rooms
+    get filled with shortest distance to nearest gate.
+
+    '
+- id: lc-207
+  name: Course Schedule
+  leetcode_num: 207
+  difficulty: Medium
+  patterns:
+  - topological-sort
+  structures:
+  - adj-list
+  - queue
+  - hashmap
+  blurb: 'Kahn''s BFS. Build adjacency list + in-degree map. Process zero-in-degree nodes; decrement neighbors.
+    Cycle exists if processed count < numCourses.
+
+    '
+- id: lc-210
+  name: Course Schedule II
+  leetcode_num: 210
+  difficulty: Medium
+  patterns:
+  - topological-sort
+  structures:
+  - adj-list
+  - queue
+  - hashmap
+  blurb: 'Kahn''s BFS topological sort returning the processing order. If result.size() < numCourses,
+    a cycle prevents completion.
+
+    '
+- id: lc-684
+  name: Redundant Connection
+  leetcode_num: 684
+  difficulty: Medium
+  patterns:
+  - union-find-pattern
+  structures:
+  - union-find
+  blurb: 'Process edges in order. Union-Find: if two nodes already share a root before unioning, this
+    edge creates a cycle — return it.
+
+    '
+- id: lc-323
+  name: Number of Connected Components In An Undirected Graph
+  leetcode_num: 323
+  difficulty: Medium
+  patterns:
+  - union-find-pattern
+  structures:
+  - union-find
+  blurb: 'Union-Find: process each edge, union the two endpoints. Count distinct roots at the end to get
+    the number of connected components.
+
+    '
+- id: lc-261
+  name: Graph Valid Tree
+  leetcode_num: 261
+  difficulty: Medium
+  patterns:
+  - union-find-pattern
+  structures:
+  - union-find
+  blurb: 'Valid tree: exactly n-1 edges and no cycles. Union-Find: if an edge connects already-connected
+    nodes, a cycle exists → return false.
+
+    '
+- id: lc-127
+  name: Word Ladder
+  leetcode_num: 127
+  difficulty: Hard
+  patterns:
+  - bfs
+  structures:
+  - hashset
+  - queue
+  blurb: 'BFS on implicit word graph. At each step, try all 26-char substitutions for every position.
+    Use HashSet of word list for O(1) lookup. Count levels (transformations).
+
+    '
+- id: lc-332
+  name: Reconstruct Itinerary
+  leetcode_num: 332
+  difficulty: Hard
+  patterns:
+  - dfs
+  structures:
+  - adj-list
+  - treemap
+  blurb: 'Hierholzer''s algorithm for Eulerian path. DFS with lexicographically sorted neighbors (PriorityQueue).
+    Post-order: add airport after exhausting all its edges. Reverse result.
+
+    '
+- id: lc-1584
+  name: Min Cost to Connect All Points
+  leetcode_num: 1584
+  difficulty: Medium
+  patterns:
+  - union-find-pattern
+  structures:
+  - union-find
+  blurb: 'Kruskal''s MST. Treat each pair of points as an edge with Manhattan distance. Sort all edges
+    by cost, union until n-1 edges chosen. Or Prim''s algorithm with a heap.
+
+    '
+- id: lc-743
+  name: Network Delay Time
+  leetcode_num: 743
+  difficulty: Medium
+  patterns:
+  - bfs
+  structures:
+  - heap
+  - adj-list
+  - hashmap
+  blurb: 'Dijkstra from source. Min-heap of (dist, node). Skip if popped dist > known. Answer is max dist
+    across all nodes; -1 if any unreachable.
+
+    '
+- id: lc-778
+  name: Swim In Rising Water
+  leetcode_num: 778
+  difficulty: Hard
+  patterns:
+  - binary-search-on-answer
+  structures:
+  - heap
+  - array
+  blurb: 'Dijkstra treating grid[r][c] as the edge weight to enter that cell. Min-heap. Alternatively
+    binary search on water level + BFS/DFS feasibility.
+
+    '
+- id: lc-269
+  name: Alien Dictionary
+  leetcode_num: 269
+  difficulty: Hard
+  patterns:
+  - topological-sort
+  structures:
+  - adj-list
+  - queue
+  - hashmap
+  blurb: 'Build char ordering graph by comparing adjacent words character by character. Kahn''s topological
+    sort. If cycle detected or graph incomplete, return empty string.
+
+    '
+- id: lc-787
+  name: Cheapest Flights Within K Stops
+  leetcode_num: 787
+  difficulty: Medium
+  patterns:
+  - bfs
+  structures:
+  - queue
+  - adj-list
+  - hashmap
+  blurb: 'BFS level by level (each level = one stop). Track min cost per node. Alternatively Bellman-Ford
+    relaxing edges exactly K+1 times.
+
+    '
+- id: lc-70
+  name: Climbing Stairs
+  leetcode_num: 70
+  difficulty: Easy
+  patterns:
+  - dp-1d
+  structures:
+  - array
+  blurb: 'dp[i] = dp[i-1] + dp[i-2]. Fibonacci recurrence. Reducible to O(1) space with two variables.
+
+    '
+- id: lc-746
+  name: Min Cost Climbing Stairs
+  leetcode_num: 746
+  difficulty: Easy
+  patterns:
+  - dp-1d
+  structures:
+  - array
+  blurb: 'dp[i] = min(dp[i-1], dp[i-2]) + cost[i]. Can start from step 0 or 1. Answer is min(dp[n-1],
+    dp[n-2]) — can step past the top from either.
+
+    '
+- id: lc-198
+  name: House Robber
+  leetcode_num: 198
+  difficulty: Medium
+  patterns:
+  - dp-1d
+  structures:
+  - array
+  blurb: 'dp[i] = max(dp[i-2] + nums[i], dp[i-1]). At each house: rob it + best 2 back, or skip it. O(1)
+    space reducible.
+
+    '
+- id: lc-213
+  name: House Robber II
+  leetcode_num: 213
+  difficulty: Medium
+  patterns:
+  - dp-1d
+  structures:
+  - array
+  blurb: 'Houses in a circle: can''t rob both first and last. Run House Robber on nums[0..n-2] and nums[1..n-1]
+    separately. Return the max.
+
+    '
+- id: lc-5
+  name: Longest Palindromic Substring
+  leetcode_num: 5
+  difficulty: Medium
+  patterns:
+  - dp-2d
+  structures:
+  - array
+  blurb: 'Expand from each center (odd-length and even-length palindromes). Track start and max length.
+    O(n²) time, O(1) space.
+
+    '
+- id: lc-647
+  name: Palindromic Substrings
+  leetcode_num: 647
+  difficulty: Medium
+  patterns:
+  - dp-2d
+  structures:
+  - array
+  blurb: 'Expand from each center (odd/even). Count each valid palindrome expansion. Same approach as
+    LC 5 but counts instead of tracks max.
+
+    '
+- id: lc-91
+  name: Decode Ways
+  leetcode_num: 91
+  difficulty: Medium
+  patterns:
+  - dp-1d
+  structures:
+  - array
+  blurb: 'dp[i] = ways to decode s[0..i-1]. Single digit valid (not ''0''): dp[i] += dp[i-1]. Two digit
+    in [10,26]: dp[i] += dp[i-2]. O(n).
+
+    '
+- id: lc-322
+  name: Coin Change
+  leetcode_num: 322
+  difficulty: Medium
+  patterns:
+  - dp-1d
+  structures:
+  - array
+  blurb: 'dp[amount] = min coins. For each amount, try all coins: dp[a] = min(dp[a], dp[a-coin]+1). Initialize
+    to amount+1 (infinity proxy).
+
+    '
+- id: lc-152
+  name: Maximum Product Subarray
+  leetcode_num: 152
+  difficulty: Medium
+  patterns:
+  - kadane
+  structures:
+  - array
+  blurb: 'Track both maxProd and minProd ending at i — negatives flip them. At each step: max(num, num*maxProd,
+    num*minProd). Global max across all positions.
+
+    '
+- id: lc-139
+  name: Word Break
+  leetcode_num: 139
+  difficulty: Medium
+  patterns:
+  - memoized-dfs
+  - dp-1d
+  structures:
+  - hashmap
+  - hashset
+  blurb: 'dp[i] = can we segment s[0..i]. For each end i, try all word lengths. Or top-down DFS with HashMap
+    memo on start index.
+
+    '
+- id: lc-300
+  name: Longest Increasing Subsequence
+  leetcode_num: 300
+  difficulty: Medium
+  patterns:
+  - dp-1d
+  structures:
+  - array
+  blurb: 'dp[i] = max(dp[j]+1) for all j < i where nums[j] < nums[i]. O(n²). Binary search variant gives
+    O(n log n) with patience sorting.
+
+    '
+- id: lc-416
+  name: Partition Equal Subset Sum
+  leetcode_num: 416
+  difficulty: Medium
+  patterns:
+  - dp-knapsack
+  structures:
+  - array
+  blurb: 'Target = sum/2. Boolean dp[j] = can we make sum j. Iterate items outer, target inner (reverse
+    to avoid reuse). 0/1 knapsack pattern.
+
+    '
+- id: lc-62
+  name: Unique Paths
+  leetcode_num: 62
+  difficulty: Medium
+  patterns:
+  - dp-2d
+  structures:
+  - array
+  blurb: 'dp[i][j] = dp[i-1][j] + dp[i][j-1]. First row and column all 1s. Or combinatorics: C(m+n-2,
+    m-1). O(m*n) DP, O(1) combinatorial.
+
+    '
+- id: lc-1143
+  name: Longest Common Subsequence
+  leetcode_num: 1143
+  difficulty: Medium
+  patterns:
+  - dp-2d
+  structures:
+  - array
+  blurb: 'dp[i][j] = LCS of text1[0..i] and text2[0..j]. If chars match: dp[i][j] = dp[i-1][j-1]+1. Else:
+    max of dp[i-1][j] and dp[i][j-1].
+
+    '
+- id: lc-309
+  name: Best Time to Buy And Sell Stock With Cooldown
+  leetcode_num: 309
+  difficulty: Medium
+  patterns:
+  - dp-1d
+  structures:
+  - array
+  blurb: 'Three states: held (own stock), sold (just sold today), rest (cooldown/idle). Transition: held=max(held,
+    rest-price); sold=held+price; rest=max(rest,sold).
+
+    '
+- id: lc-518
+  name: Coin Change II
+  leetcode_num: 518
+  difficulty: Medium
+  patterns:
+  - dp-knapsack
+  structures:
+  - array
+  blurb: 'Unbounded knapsack: dp[amount] = number of combinations. Iterate coins outer, amounts inner
+    (forward to allow reuse). dp[0]=1.
+
+    '
+- id: lc-494
+  name: Target Sum
+  leetcode_num: 494
+  difficulty: Medium
+  patterns:
+  - dp-knapsack
+  - memoized-dfs
+  structures:
+  - hashmap
+  - array
+  blurb: 'DFS with memoization: state = (index, remaining_sum). Assign + or - to each element. HashMap
+    memo for (idx, sum) → count.
+
+    '
+- id: lc-97
+  name: Interleaving String
+  leetcode_num: 97
+  difficulty: Medium
+  patterns:
+  - dp-2d
+  structures:
+  - array
+  blurb: 'dp[i][j] = can s1[0..i-1] and s2[0..j-1] interleave to form s3[0..i+j-1]. Transition: match
+    last char from s1 or s2. O(m*n).
+
+    '
+- id: lc-329
+  name: Longest Increasing Path In a Matrix
+  leetcode_num: 329
+  difficulty: Hard
+  patterns:
+  - memoized-dfs
+  structures:
+  - hashmap
+  - array
+  blurb: 'DFS from each cell with memoization. Longest path from (r,c) = 1 + max(dfs on neighbors with
+    strictly larger value). Memo avoids recomputation.
+
+    '
+- id: lc-115
+  name: Distinct Subsequences
+  leetcode_num: 115
+  difficulty: Hard
+  patterns:
+  - dp-2d
+  structures:
+  - array
+  blurb: 'dp[i][j] = ways s[0..j-1] appears as subsequence in t[0..i-1]. If chars match: dp[i][j] = dp[i-1][j-1]
+    + dp[i-1][j]. Else: dp[i-1][j].
+
+    '
+- id: lc-72
+  name: Edit Distance
+  leetcode_num: 72
+  difficulty: Medium
+  patterns:
+  - dp-2d
+  structures:
+  - array
+  blurb: 'dp[i][j] = min edits to convert word1[0..i] to word2[0..j]. If chars match: dp[i-1][j-1]. Else:
+    1 + min(insert, delete, replace).
+
+    '
+- id: lc-312
+  name: Burst Balloons
+  leetcode_num: 312
+  difficulty: Hard
+  patterns:
+  - dp-2d
+  structures:
+  - array
+  blurb: 'Interval DP. dp[l][r] = max coins in range (l,r). For each k as the LAST balloon burst in range:
+    dp[l][r] = max(nums[l]*nums[k]*nums[r] + dp[l][k] + dp[k][r]).
+
+    '
+- id: lc-10
+  name: Regular Expression Matching
+  leetcode_num: 10
+  difficulty: Hard
+  patterns:
+  - dp-2d
+  structures:
+  - array
+  blurb: 'dp[i][j] = p[0..j-1] matches s[0..i-1]. If p[j-1]=''*'': zero uses (dp[i][j-2]) or one+ uses
+    (p[j-2] matches s[i-1] AND dp[i-1][j]).
+
+    '
+- id: lc-53
+  name: Maximum Subarray
+  leetcode_num: 53
+  difficulty: Medium
+  patterns:
+  - kadane
+  structures:
+  - array
+  blurb: 'Kadane''s: current = max(nums[i], current + nums[i]). Track global max. O(n) time O(1) space.
+    Reset on negative running sum.
+
+    '
+- id: lc-55
+  name: Jump Game
+  leetcode_num: 55
+  difficulty: Medium
+  patterns:
+  - greedy
+  structures:
+  - array
+  blurb: 'Track max reachable index as you scan. If current index > max reachable, return false. If max
+    reachable ≥ last index, return true.
+
+    '
+- id: lc-45
+  name: Jump Game II
+  leetcode_num: 45
+  difficulty: Medium
+  patterns:
+  - greedy
+  structures:
+  - array
+  blurb: 'Track current reach end and farthest reachable from within current reach. When you reach end
+    of current reach, increment jumps, extend to farthest.
+
+    '
+- id: lc-134
+  name: Gas Station
+  leetcode_num: 134
+  difficulty: Medium
+  patterns:
+  - greedy
+  structures:
+  - array
+  blurb: 'Total gas ≥ total cost guarantees a solution. Greedy: start wherever the running tank goes negative.
+    Track total deficit for overall feasibility.
+
+    '
+- id: lc-846
+  name: Hand of Straights
+  leetcode_num: 846
+  difficulty: Medium
+  patterns:
+  - greedy
+  structures:
+  - treemap
+  blurb: 'TreeMap of card counts. For each group, take the smallest card and consume k consecutive values.
+    If any value is missing in the sequence, return false.
+
+    '
+- id: lc-1899
+  name: Merge Triplets to Form Target Triplet
+  leetcode_num: 1899
+  difficulty: Medium
+  patterns:
+  - greedy
+  structures:
+  - array
+  blurb: 'Keep only triplets where all values ≤ corresponding target values. Take component-wise max of
+    valid triplets. Valid if result equals target.
+
+    '
+- id: lc-763
+  name: Partition Labels
+  leetcode_num: 763
+  difficulty: Medium
+  patterns:
+  - greedy
+  structures:
+  - hashmap
+  blurb: 'Precompute last occurrence of each char. Scan left to right; extend current partition to the
+    last occurrence of each char seen. Close partition when i == current end.
+
+    '
+- id: lc-678
+  name: Valid Parenthesis String
+  leetcode_num: 678
+  difficulty: Medium
+  patterns:
+  - greedy
+  structures:
+  - array
+  blurb: 'Track range [lo, hi] of possible open-bracket counts. ''('' increments both; '')'' decrements
+    both; ''*'' expands range. Clamp lo to 0. Invalid if hi < 0. Valid if lo == 0.
+
+    '
+- id: lc-57
+  name: Insert Interval
+  leetcode_num: 57
+  difficulty: Medium
+  patterns:
+  - interval
+  structures:
+  - array
+  blurb: 'Three phases: append intervals ending before new interval starts; merge all overlapping intervals
+    with the new one; append remaining. O(n).
+
+    '
+- id: lc-56
+  name: Merge Intervals
+  leetcode_num: 56
+  difficulty: Medium
+  patterns:
+  - interval
+  structures:
+  - array
+  blurb: 'Sort by start time. Iterate: if current start ≤ last merged end, extend the end. Otherwise start
+    a new interval.
+
+    '
+- id: lc-435
+  name: Non Overlapping Intervals
+  leetcode_num: 435
+  difficulty: Medium
+  patterns:
+  - interval
+  - greedy
+  structures:
+  - array
+  blurb: 'Sort by END time. Greedily keep intervals with earliest end. Count removals when current start
+    < previous end.
+
+    '
+- id: lc-252
+  name: Meeting Rooms
+  leetcode_num: 252
+  difficulty: Easy
+  patterns:
+  - interval
+  structures:
+  - array
+  blurb: 'Sort by start time. If any meeting starts before the previous ends (start < prevEnd), overlap
+    exists — return false.
+
+    '
+- id: lc-253
+  name: Meeting Rooms II
+  leetcode_num: 253
+  difficulty: Medium
+  patterns:
+  - sweep-line
+  - heap-pattern
+  structures:
+  - heap
+  - array
+  blurb: 'Sort by start. Min-heap of end times. For each meeting: if start ≥ heap top, that room is free
+    (pop). Always push current end. Heap size is min rooms needed.
+
+    '
+- id: lc-1851
+  name: Minimum Interval to Include Each Query
+  leetcode_num: 1851
+  difficulty: Hard
+  patterns:
+  - sweep-line
+  structures:
+  - heap
+  - array
+  blurb: 'Sort queries and intervals by start. Sweep queries left to right. Add intervals that start ≤
+    query to a min-heap by size. Remove expired (end < query). Heap top is answer.
+
+    '
+- id: lc-48
+  name: Rotate Image
+  leetcode_num: 48
+  difficulty: Medium
+  patterns: []
+  structures:
+  - array
+  blurb: 'Rotate 90° clockwise = transpose + reverse each row. Transpose: swap matrix[i][j] with matrix[j][i].
+    Then reverse each row. O(n²) in-place.
+
+    '
+- id: lc-54
+  name: Spiral Matrix
+  leetcode_num: 54
+  difficulty: Medium
+  patterns: []
+  structures:
+  - array
+  blurb: 'Boundary pointers: top, bottom, left, right. Traverse: right along top, down along right, left
+    along bottom, up along left. Shrink bounds after each pass.
+
+    '
+- id: lc-73
+  name: Set Matrix Zeroes
+  leetcode_num: 73
+  difficulty: Medium
+  patterns: []
+  structures:
+  - array
+  blurb: 'First pass: use first row/col as markers for which rows/cols to zero. Second pass: apply zeros.
+    Handle first row/col last to avoid overwriting markers.
+
+    '
+- id: lc-202
+  name: Happy Number
+  leetcode_num: 202
+  difficulty: Easy
+  patterns:
+  - fast-slow
+  structures:
+  - hashset
+  blurb: 'Sum of squares of digits. If reaches 1 → happy. Otherwise cycles. Detect with Floyd''s cycle
+    detection (fast/slow) or a HashSet of seen values.
+
+    '
+- id: lc-66
+  name: Plus One
+  leetcode_num: 66
+  difficulty: Easy
+  patterns: []
+  structures:
+  - array
+  blurb: 'Increment from last digit. Propagate carry leftward. If all digits were 9, create a new array
+    of size n+1 with leading 1.
+
+    '
+- id: lc-50
+  name: Pow(x, n)
+  leetcode_num: 50
+  difficulty: Medium
+  patterns:
+  - binary-search
+  structures:
+  - array
+  blurb: 'Fast exponentiation: x^n = (x^(n/2))^2 if n even; x * x^(n-1) if odd. Handle negative n as 1/x^(-n).
+    O(log n).
+
+    '
+- id: lc-43
+  name: Multiply Strings
+  leetcode_num: 43
+  difficulty: Medium
+  patterns: []
+  structures:
+  - array
+  blurb: 'Simulate long multiplication. For digits num1[i] and num2[j], their product contributes to result[i+j]
+    and result[i+j+1]. Handle carry. O(m*n).
+
+    '
+- id: lc-2013
+  name: Detect Squares
+  leetcode_num: 2013
+  difficulty: Medium
+  patterns:
+  - hashing
+  structures:
+  - hashmap
+  blurb: 'Store all points in a set. For each query point (px, py), enumerate all other x-coords that
+    share a point at y=py. For each, check if the square''s other two corners exist.
+
+    '
+- id: lc-136
+  name: Single Number
+  leetcode_num: 136
+  difficulty: Easy
+  patterns:
+  - bit-manip
+  structures: []
+  blurb: 'XOR all elements. Pairs cancel out (a XOR a = 0). The lone element remains. O(n) time, O(1)
+    space.
+
+    '
+- id: lc-191
+  name: Number of 1 Bits
+  leetcode_num: 191
+  difficulty: Easy
+  patterns:
+  - bit-manip
+  structures: []
+  blurb: 'x & (x-1) clears the lowest set bit. Count iterations until x == 0. Or Integer.bitCount(n) in
+    Java. O(number of set bits).
+
+    '
+- id: lc-338
+  name: Counting Bits
+  leetcode_num: 338
+  difficulty: Easy
+  patterns:
+  - bit-manip
+  structures:
+  - array
+  blurb: 'dp[i] = dp[i >> 1] + (i & 1). Right-shifting drops the lowest bit; add 1 if original number
+    was odd.
+
+    '
+- id: lc-190
+  name: Reverse Bits
+  leetcode_num: 190
+  difficulty: Easy
+  patterns:
+  - bit-manip
+  structures: []
+  blurb: 'Shift result left while adding LSB of n (n & 1), then shift n right. Repeat 32 times. Process
+    all bits including leading zeros.
+
+    '
+- id: lc-268
+  name: Missing Number
+  leetcode_num: 268
+  difficulty: Easy
+  patterns:
+  - bit-manip
+  structures: []
+  blurb: 'XOR all indices 0..n with all array values. Paired values cancel, leaving the missing number.
+    Alternatively: n*(n+1)/2 - sum.
+
+    '
+- id: lc-371
+  name: Sum of Two Integers
+  leetcode_num: 371
+  difficulty: Medium
+  patterns:
+  - bit-manip
+  structures: []
+  blurb: 'a ^ b = sum without carry; (a & b) << 1 = carry. Iterate until carry is 0. In Java, mask to
+    32 bits to avoid infinite loops with negative numbers.
+
+    '
+- id: lc-7
+  name: Reverse Integer
+  leetcode_num: 7
+  difficulty: Medium
+  patterns:
+  - bit-manip
+  structures: []
+  blurb: 'Extract digits with % 10 and / 10. Rebuild reversed number. Before multiplying by 10, check
+    if rev > (INT_MAX - digit) / 10 to detect overflow. Return 0 on overflow.
+
+    '
+- id: lc-733
+  name: Flood Fill
+  leetcode_num: 733
+  difficulty: Easy
+  patterns:
+  - matrix-traversal
+  structures:
+  - queue
+  - array
+  blurb: 'BFS or DFS from source pixel. Replace original color with new color. Skip cells that are already
+    the new color to avoid infinite loop.
+
+    '
+- id: lc-560
+  name: Subarray Sum Equals K
+  leetcode_num: 560
+  difficulty: Medium
+  patterns:
+  - prefix-sum
+  - hashing
+  structures:
+  - hashmap
+  - array
+  blurb: 'Running prefix sum. HashMap stores {prefixSum → count}. At each index, look up (currentSum -
+    k). Initialize map with {0:1}.
+
+    '
+- id: lc-846
+  name: Accounts Merge
+  leetcode_num: 721
+  difficulty: Medium
+  patterns:
+  - union-find-pattern
+  structures:
+  - union-find
+  - hashmap
+  blurb: 'Union-Find where each email maps to an integer id. Union emails sharing the same account. Group
+    by root, sort emails within group.
+
+    '
+- id: lc-981
+  name: Capacity to Ship Packages Within D Days
+  leetcode_num: 1011
+  difficulty: Medium
+  patterns:
+  - binary-search-on-answer
+  structures:
+  - array
+  blurb: 'Binary search on ship capacity in [max(weights), sum(weights)]. Feasibility: simulate greedy
+    loading — does it fit in D days at this capacity?
+
+    '

@@ -1,0 +1,513 @@
+# =============================================================================
+# Algorithms — Senior-level reference
+# =============================================================================
+# Separate from patterns.yaml — these are concrete named algorithms, not
+# abstract problem-solving patterns. Referenced in composite DS designs and
+# system design interviews.
+# =============================================================================
+
+categories:
+  - id: sorting
+    name: Sorting
+    order: 1
+  - id: graph
+    name: Graph Traversal
+    order: 2
+  - id: shortest-path
+    name: Shortest Path
+    order: 3
+  - id: mst
+    name: Minimum Spanning Tree
+    order: 4
+  - id: string
+    name: String Matching
+    order: 5
+  - id: other
+    name: Other
+    order: 6
+
+algorithms:
+
+  # ---------------------------------------------------------------------------
+  # Sorting
+  # ---------------------------------------------------------------------------
+
+  - id: bubble-sort
+    name: Bubble Sort
+    category: sorting
+    time_best: "O(n)"
+    time_avg: "O(n²)"
+    time_worst: "O(n²)"
+    space: "O(1)"
+    stable: true
+    java: "Manual implementation only"
+    when_to_use:
+      - Teaching / interviews for conceptual explanation
+      - Nearly sorted data with early-exit optimization
+    senior_insight: |
+      With the early-exit flag, best case is O(n) on already-sorted input. In practice,
+      never use in production — insertion sort dominates on small/nearly-sorted data,
+      and merge/tim sort dominates elsewhere.
+    gotchas:
+      - "Early-exit flag is critical — without it, best case stays O(n²)."
+
+  - id: selection-sort
+    name: Selection Sort
+    category: sorting
+    time_best: "O(n²)"
+    time_avg: "O(n²)"
+    time_worst: "O(n²)"
+    space: "O(1)"
+    stable: false
+    java: "Manual implementation only"
+    when_to_use:
+      - Minimizing write operations (only n swaps total)
+      - Teaching sort algorithms
+    senior_insight: |
+      Only n swaps regardless of input — useful when writes are expensive (e.g. flash memory).
+      Not stable: equal elements can be reordered. Insertion sort is strictly better for most cases.
+    gotchas:
+      - "Not stable — two equal elements may swap relative order."
+
+  - id: insertion-sort
+    name: Insertion Sort
+    category: sorting
+    time_best: "O(n)"
+    time_avg: "O(n²)"
+    time_worst: "O(n²)"
+    space: "O(1)"
+    stable: true
+    java: "Used internally by Tim Sort for small subarrays (< 32 elements)"
+    when_to_use:
+      - Small arrays (n < 20) — outperforms merge/quick in practice
+      - Nearly sorted data
+      - Online sorting (elements arrive one at a time)
+    senior_insight: |
+      Java's Tim Sort uses insertion sort for subarrays under 32 elements — it's the reason
+      Tim Sort beats pure merge sort on real-world data. O(n) shifts per insert, but constant
+      factors are tiny. Adaptive: O(nk) when each element is at most k positions from sorted position.
+    gotchas:
+      - "O(n²) shifts in worst case (reverse-sorted input)."
+
+  - id: merge-sort
+    name: Merge Sort
+    category: sorting
+    time_best: "O(n log n)"
+    time_avg: "O(n log n)"
+    time_worst: "O(n log n)"
+    space: "O(n)"
+    stable: true
+    java: "Arrays.sort(Object[]) — Tim Sort (merge-based)"
+    when_to_use:
+      - Guaranteed O(n log n) worst case
+      - Sorting linked lists (no random access needed)
+      - Stable sort required
+      - External sort (data too large for RAM)
+    senior_insight: |
+      Java uses Tim Sort (hybrid merge + insertion) for object arrays — stable, O(n log n) worst,
+      and exploits existing runs for near-linear performance on real data. For primitives,
+      Java uses dual-pivot quicksort (faster constants, not stable). Divide-and-conquer:
+      split → sort halves → merge.
+    gotchas:
+      - "O(n) extra space — not in-place. For in-place merge sort, complexity jumps to O(n log²n)."
+      - "Merge step is O(n) — the bottleneck."
+
+  - id: quick-sort
+    name: Quick Sort
+    category: sorting
+    time_best: "O(n log n)"
+    time_avg: "O(n log n)"
+    time_worst: "O(n²)"
+    space: "O(log n)"
+    stable: false
+    java: "Arrays.sort(int[]) — dual-pivot quicksort"
+    when_to_use:
+      - General-purpose in-place sorting (best practical performance)
+      - When average case matters more than worst case
+    senior_insight: |
+      Java's dual-pivot quicksort (Yaroslavskiy, 2009) uses two pivots, divides into three
+      parts, and beats classic quicksort on real data. Worst case O(n²) only on adversarial
+      input — Java's implementation includes safeguards. Lomuto vs Hoare partition schemes:
+      Hoare does 3x fewer swaps on average.
+    gotchas:
+      - "Worst case O(n²) on sorted/reverse-sorted input with a bad pivot choice."
+      - "Not stable — equal elements can swap."
+      - "Stack depth is O(log n) avg, O(n) worst — iterative version avoids stack overflow."
+
+  - id: heap-sort
+    name: Heap Sort
+    category: sorting
+    time_best: "O(n log n)"
+    time_avg: "O(n log n)"
+    time_worst: "O(n log n)"
+    space: "O(1)"
+    stable: false
+    java: "Manual implementation; PriorityQueue gives O(n log n) but O(n) extra space"
+    when_to_use:
+      - Guaranteed O(n log n) AND O(1) space required simultaneously
+      - Not needed when stability is required
+    senior_insight: |
+      Build-heap phase is O(n) (not O(n log n) — heapify is called on progressively larger
+      subtrees). Extract-max is O(log n) × n. Total O(n log n), O(1) space. In practice
+      slower than quicksort due to poor cache locality (heap accesses jump around memory).
+    gotchas:
+      - "Not stable."
+      - "Poor cache performance compared to merge/quicksort."
+
+  - id: counting-sort
+    name: Counting Sort
+    category: sorting
+    time_best: "O(n + k)"
+    time_avg: "O(n + k)"
+    time_worst: "O(n + k)"
+    space: "O(k)"
+    stable: true
+    java: "Manual implementation — useful for chars, small ints"
+    when_to_use:
+      - Integer keys in a small known range [0, k]
+      - Sorting characters (k=26 for lowercase ASCII)
+      - As subroutine in radix sort
+    senior_insight: |
+      Not a comparison sort — beats O(n log n) lower bound by exploiting key structure.
+      k is the range, not number of distinct values. If k >> n (sparse range), wasteful.
+      Standard trick for anagram grouping, character frequency, or sorting ages.
+    gotchas:
+      - "Only works on integer keys with a bounded range."
+      - "k must be small — O(n + k) is only better than O(n log n) when k = O(n)."
+
+  - id: radix-sort
+    name: Radix Sort
+    category: sorting
+    time_best: "O(nk)"
+    time_avg: "O(nk)"
+    time_worst: "O(nk)"
+    space: "O(n + b)"
+    stable: true
+    java: "Manual implementation — rare in interviews"
+    when_to_use:
+      - Sorting fixed-width integers or strings
+      - k (number of digits/chars) is small and fixed
+      - Need O(n) sort on integers
+    senior_insight: |
+      LSD (least-significant digit first) radix sort with counting sort as subroutine is stable
+      and O(nk) where k = digits. For 32-bit integers: 4 passes with base 256 = O(4n) ≈ O(n).
+      Rarely comes up in interviews but important for system design (sorting IPs, phone numbers).
+    gotchas:
+      - "Must use a stable sort (counting sort) as the subroutine."
+      - "LSD vs MSD: LSD is simpler, MSD allows early termination."
+
+  # ---------------------------------------------------------------------------
+  # Graph Traversal
+  # ---------------------------------------------------------------------------
+
+  - id: bfs-algo
+    name: BFS (Breadth-First Search)
+    category: graph
+    time_best: "O(V + E)"
+    time_avg: "O(V + E)"
+    time_worst: "O(V + E)"
+    space: "O(V)"
+    java: "ArrayDeque<Node> as queue; HashSet<Node> for visited"
+    when_to_use:
+      - Shortest path in unweighted graph
+      - Level-order traversal
+      - Multi-source shortest distance
+      - Checking bipartiteness
+    senior_insight: |
+      Mark visited when ENQUEUING, not dequeuing — prevents the same node being added
+      to the queue multiple times, which would inflate time complexity to O(V²) in dense
+      graphs. For multi-source BFS (e.g. Rotting Oranges), seed all sources simultaneously.
+    gotchas:
+      - "Visited marking on enqueue, not dequeue — common source of TLE."
+      - "Track level size: snapshot queue.size() at start of each level loop."
+
+  - id: dfs-algo
+    name: DFS (Depth-First Search)
+    category: graph
+    time_best: "O(V + E)"
+    time_avg: "O(V + E)"
+    time_worst: "O(V + E)"
+    space: "O(V)"
+    java: "Recursive (implicit stack) or explicit ArrayDeque<Node>"
+    when_to_use:
+      - Cycle detection
+      - Topological sort (DFS-based post-order)
+      - Connected components
+      - Path finding (all paths)
+      - Strongly connected components (Tarjan/Kosaraju)
+    senior_insight: |
+      Java recursion limit is ~5000–8000 frames — deep graphs cause StackOverflowError.
+      Convert to iterative with an explicit ArrayDeque for large inputs. For cycle detection
+      in directed graphs, use three-color marking (white=unvisited, gray=in-stack, black=done):
+      a gray→gray back-edge is a cycle.
+    gotchas:
+      - "Mark visited BEFORE recursing — not after — to handle revisit from multiple parents."
+      - "Recursion depth limit in Java — convert to iterative for large graphs."
+
+  # ---------------------------------------------------------------------------
+  # Shortest Path
+  # ---------------------------------------------------------------------------
+
+  - id: dijkstra
+    name: Dijkstra's Algorithm
+    category: shortest-path
+    time_best: "O((V + E) log V)"
+    time_avg: "O((V + E) log V)"
+    time_worst: "O((V + E) log V)"
+    space: "O(V + E)"
+    java: "PriorityQueue<int[]> keyed on distance; HashMap<Node, Integer> for dist[]"
+    when_to_use:
+      - Single-source shortest path with non-negative weights
+      - Road networks, network routing
+      - Weighted BFS
+    senior_insight: |
+      Only correct with non-negative weights. With a binary heap: O((V+E) log V).
+      With Fibonacci heap: O(E + V log V) — theoretically optimal but rarely implemented.
+      Lazy deletion variant: push (dist, node) even if stale; skip if popped dist > known dist.
+      This is the standard interview implementation.
+    gotchas:
+      - "Fails with negative edge weights — use Bellman-Ford instead."
+      - "Lazy deletion: always check if popped distance > dist[node] and skip if so."
+
+  - id: bellman-ford
+    name: Bellman-Ford Algorithm
+    category: shortest-path
+    time_best: "O(V * E)"
+    time_avg: "O(V * E)"
+    time_worst: "O(V * E)"
+    space: "O(V)"
+    java: "int[] dist array; iterate all edges V-1 times"
+    when_to_use:
+      - Negative edge weights
+      - Detecting negative weight cycles
+      - Cheapest Flights Within K Stops (relax exactly K+1 times)
+    senior_insight: |
+      Relax all E edges exactly V-1 times. A V-th pass that still relaxes indicates a
+      negative cycle. Can solve "K stops" variant by running exactly K+1 relaxation rounds
+      (use a copy of dist[] each round to prevent chaining within the same round).
+    gotchas:
+      - "O(VE) — much slower than Dijkstra; only use when negative weights present."
+      - "Use a dist-copy each round for the K-stops variant — avoid same-round chaining."
+
+  - id: floyd-warshall
+    name: Floyd-Warshall Algorithm
+    category: shortest-path
+    time_best: "O(V³)"
+    time_avg: "O(V³)"
+    time_worst: "O(V³)"
+    space: "O(V²)"
+    java: "int[][] dist matrix; triple nested loop"
+    when_to_use:
+      - All-pairs shortest path
+      - Small dense graphs (V ≤ 500)
+      - Detecting negative cycles (diagonal goes negative)
+      - Transitive closure
+    senior_insight: |
+      DP: dist[i][j] = min path from i to j using only vertices {0..k} as intermediaries.
+      Initialize dist[i][j] = weight(i,j) or ∞. For each k: dist[i][j] = min(dist[i][j], dist[i][k]+dist[k][j]).
+      Rarely asked in coding rounds but appears in system design (routing tables).
+    gotchas:
+      - "O(V³) — impractical for V > 1000."
+      - "Negative cycle detection: if dist[i][i] < 0 after algorithm, negative cycle exists."
+
+  # ---------------------------------------------------------------------------
+  # Minimum Spanning Tree
+  # ---------------------------------------------------------------------------
+
+  - id: kruskal
+    name: Kruskal's Algorithm
+    category: mst
+    time_best: "O(E log E)"
+    time_avg: "O(E log E)"
+    time_worst: "O(E log E)"
+    space: "O(V + E)"
+    java: "Sort edges; Union-Find (int[] parent + int[] rank)"
+    when_to_use:
+      - MST on sparse graphs
+      - Edge list is already sorted or cheaply sortable
+      - Union-Find already in scope
+    senior_insight: |
+      Greedy: sort all edges by weight, add the cheapest edge that doesn't form a cycle
+      (checked with Union-Find in O(α(V))). Total: O(E log E) for sort + O(E α(V)) for
+      union-find ≈ O(E log E). For dense graphs, Prim's with an adjacency matrix is O(V²) —
+      potentially faster when E ≈ V².
+    gotchas:
+      - "Requires connected graph — check that exactly V-1 edges were added."
+      - "Ties in edge weight can produce different (but equally valid) MSTs."
+
+  - id: prim
+    name: Prim's Algorithm
+    category: mst
+    time_best: "O(E log V)"
+    time_avg: "O(E log V)"
+    time_worst: "O(E log V)"
+    space: "O(V + E)"
+    java: "PriorityQueue<int[]> of (cost, node); boolean[] inMST"
+    when_to_use:
+      - MST on dense graphs
+      - Growing the MST one vertex at a time from a start node
+    senior_insight: |
+      Greedy: maintain a min-heap of cheapest edge reaching each unvisited vertex.
+      With binary heap: O(E log V). With Fibonacci heap: O(E + V log V).
+      For adjacency matrix + no heap: O(V²) — better than Kruskal for dense graphs.
+      Both produce the same MST weight (different edge sets possible with ties).
+    gotchas:
+      - "Mark vertices as 'in MST' when popped, not when pushed — prevents processing stale entries."
+
+  # ---------------------------------------------------------------------------
+  # String Matching
+  # ---------------------------------------------------------------------------
+
+  - id: kmp
+    name: KMP (Knuth-Morris-Pratt)
+    category: string
+    time_best: "O(n + m)"
+    time_avg: "O(n + m)"
+    time_worst: "O(n + m)"
+    space: "O(m)"
+    java: "int[] lps (longest proper prefix-suffix) table; manual implementation"
+    when_to_use:
+      - Single pattern matching in a text
+      - Avoiding O(nm) naive matching
+      - strStr() / indexOf() equivalent without built-ins
+    senior_insight: |
+      Build the LPS (failure function) array: lps[i] = length of longest proper prefix of
+      pattern[0..i] that is also a suffix. On mismatch at pattern[j], fall back to lps[j-1]
+      instead of restarting. Text pointer never backtracks — O(n) text traversal guaranteed.
+      Java's String.indexOf() uses a variant of Boyer-Moore-Horspool, not KMP.
+    gotchas:
+      - "Building the LPS table correctly is the hard part — use two pointers (len and i)."
+      - "After match, use lps[m-1] to continue searching for overlapping matches."
+
+  - id: rabin-karp
+    name: Rabin-Karp Algorithm
+    category: string
+    time_best: "O(n + m)"
+    time_avg: "O(n + m)"
+    time_worst: "O(nm)"
+    space: "O(1)"
+    java: "Rolling hash; manual implementation"
+    when_to_use:
+      - Multiple pattern matching (one hash per pattern)
+      - Plagiarism detection
+      - Substring search where hash comparison is sufficient
+    senior_insight: |
+      Rolling hash: remove leftmost char's contribution, slide right. Average O(n+m);
+      worst case O(nm) due to hash collisions. Use a large prime and double hashing to
+      reduce collision probability. The key interview insight: can search for k patterns
+      simultaneously in O(n+km) using a HashSet of pattern hashes.
+    gotchas:
+      - "Hash collisions → false positives. Always verify with string comparison on match."
+      - "Negative hash values in Java — use (hash % mod + mod) % mod to keep positive."
+
+  - id: z-algorithm
+    name: Z-Algorithm
+    category: string
+    time_best: "O(n + m)"
+    time_avg: "O(n + m)"
+    time_worst: "O(n + m)"
+    space: "O(n + m)"
+    java: "int[] Z array; manual implementation"
+    when_to_use:
+      - Pattern matching (alternative to KMP)
+      - Finding period of a string
+      - Counting distinct substrings (with suffix array)
+    senior_insight: |
+      Build Z[i] = length of longest substring starting at i that matches a prefix of the
+      full string. Concatenate pattern + '$' + text, build Z array — positions where Z[i] = m
+      are matches. Simpler to implement correctly than KMP. Less commonly known → can impress.
+    gotchas:
+      - "Use a separator character ('$') that doesn't appear in pattern or text."
+
+  # ---------------------------------------------------------------------------
+  # Other
+  # ---------------------------------------------------------------------------
+
+  - id: union-find-algo
+    name: Union-Find (DSU)
+    category: other
+    time_best: "O(α(n))"
+    time_avg: "O(α(n))"
+    time_worst: "O(α(n))"
+    space: "O(n)"
+    java: "int[] parent + int[] rank; path compression + union by rank"
+    when_to_use:
+      - Dynamic connectivity queries
+      - Cycle detection in undirected graphs
+      - Kruskal's MST
+      - Number of connected components
+    senior_insight: |
+      α(n) is the inverse Ackermann function — grows slower than log*(n), effectively constant
+      for any practical n. Requires BOTH path compression (find sets parent[x] = find(parent[x]))
+      AND union by rank/size. Without both, worst case degrades to O(log n) per op.
+      Path compression alone gives O(log n) amortized. Union by rank alone gives O(log n).
+    gotchas:
+      - "Path compression: parent[x] = find(parent[x]) — set directly to root, not just one level up."
+      - "Union by rank: attach smaller tree under larger. Always union by rank, never arbitrarily."
+
+  - id: kadane-algo
+    name: Kadane's Algorithm
+    category: other
+    time_best: "O(n)"
+    time_avg: "O(n)"
+    time_worst: "O(n)"
+    space: "O(1)"
+    java: "Two variables: currentMax, globalMax"
+    when_to_use:
+      - Maximum sum contiguous subarray
+      - Maximum product subarray (track both max and min)
+      - Circular subarray (run twice: once normal, once negated)
+    senior_insight: |
+      currentMax = max(nums[i], currentMax + nums[i]): either extend the previous subarray
+      or start fresh at current element. For the product variant, maintain both maxProd and
+      minProd because a negative × negative becomes positive. For circular max subarray:
+      answer = max(kadane_normal, totalSum - kadane_minimum).
+    gotchas:
+      - "All-negative input: return the maximum single element, not 0."
+      - "Product variant: swap max and min after multiplying by a negative number."
+
+  - id: binary-search-algo
+    name: Binary Search
+    category: other
+    time_best: "O(1)"
+    time_avg: "O(log n)"
+    time_worst: "O(log n)"
+    space: "O(1)"
+    java: "Arrays.binarySearch(arr, key) — returns index or -(insertion point)-1"
+    when_to_use:
+      - Search in sorted array
+      - First/last occurrence of value
+      - Search on answer space (feasibility predicate)
+      - Rotated sorted arrays
+    senior_insight: |
+      Three templates — each handles a different termination condition:
+      (1) exact match: lo <= hi, return mid when found;
+      (2) first-true (leftmost): lo < hi, hi = mid when true, answer is lo;
+      (3) last-true (rightmost): lo < hi, lo = mid+1 when true, answer is hi-1.
+      Always use mid = lo + (hi - lo) / 2 to avoid integer overflow.
+      Arrays.binarySearch returns negative on miss: -insertionPoint - 1.
+    gotchas:
+      - "mid = lo + (hi - lo) / 2 — not (lo + hi) / 2 (overflow for large indices)."
+      - "lo <= hi vs lo < hi changes loop termination — be deliberate about which template."
+      - "Off-by-one: shrinking by hi = mid vs hi = mid-1 defines inclusive vs exclusive bounds."
+
+  - id: tim-sort
+    name: Tim Sort
+    category: sorting
+    time_best: "O(n)"
+    time_avg: "O(n log n)"
+    time_worst: "O(n log n)"
+    space: "O(n)"
+    stable: true
+    java: "Arrays.sort(Object[]), Collections.sort() — Java's default object sort"
+    when_to_use:
+      - Default Java sort — always used when sorting objects
+      - Real-world data with existing partial order
+    senior_insight: |
+      Hybrid of merge sort and insertion sort. Splits input into natural runs (already-sorted
+      sequences), extends short runs with insertion sort (min run size ~32-64), then merges
+      runs with merge sort. O(n) on already-sorted input, O(n log n) worst case.
+      Stable. Java has used Tim Sort since Java 7 (JDK-6804124). Python also uses Tim Sort.
+    gotchas:
+      - "Arrays.sort(int[]) uses dual-pivot quicksort, NOT Tim Sort — it is not stable."
+      - "Arrays.sort(Integer[]) uses Tim Sort — stable. The distinction matters for interviews."

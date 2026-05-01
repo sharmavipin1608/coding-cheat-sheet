@@ -1,0 +1,653 @@
+# =============================================================================
+# Java Snippets — canonical interview templates
+# Keys match ids in patterns.yaml, algorithms.yaml, data-structures.yaml
+# =============================================================================
+
+snippets:
+
+  # ---------------------------------------------------------------------------
+  # Patterns
+  # ---------------------------------------------------------------------------
+
+  two-pointers: |
+    // Convergent — sorted array, find pair
+    int left = 0, right = nums.length - 1;
+    while (left < right) {
+        int sum = nums[left] + nums[right];
+        if (sum == target) return new int[]{left, right};
+        else if (sum < target) left++;
+        else right--;
+    }
+
+    // Same-direction — remove duplicates in-place
+    int slow = 0;
+    for (int fast = 1; fast < nums.length; fast++) {
+        if (nums[fast] != nums[slow]) nums[++slow] = nums[fast];
+    }
+    return slow + 1;
+
+  sliding-window-dynamic: |
+    Map<Character, Integer> freq = new HashMap<>();
+    int left = 0, maxLen = 0;
+
+    for (int right = 0; right < s.length(); right++) {
+        freq.merge(s.charAt(right), 1, Integer::sum);
+
+        while (/* window invalid, e.g. freq.size() > k */) {
+            char lc = s.charAt(left++);
+            freq.merge(lc, -1, Integer::sum);
+            if (freq.get(lc) == 0) freq.remove(lc);
+        }
+
+        maxLen = Math.max(maxLen, right - left + 1);
+    }
+
+  sliding-window-fixed: |
+    // Build first window of size k
+    Map<Character, Integer> need = new HashMap<>(), window = new HashMap<>();
+    for (char c : p.toCharArray()) need.merge(c, 1, Integer::sum);
+    int formed = 0, required = need.size();
+
+    for (int right = 0; right < s.length(); right++) {
+        char rc = s.charAt(right);
+        window.merge(rc, 1, Integer::sum);
+        if (need.containsKey(rc) && window.get(rc).equals(need.get(rc))) formed++;
+
+        if (right >= k - 1) {          // window full
+            if (formed == required) { /* match */ }
+            char lc = s.charAt(right - k + 1);
+            if (need.containsKey(lc) && window.get(lc).equals(need.get(lc))) formed--;
+            window.merge(lc, -1, Integer::sum);
+        }
+    }
+
+  fast-slow: |
+    // Floyd's cycle detection
+    ListNode slow = head, fast = head;
+    while (fast != null && fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow == fast) {
+            // Cycle confirmed — find entry point
+            slow = head;
+            while (slow != fast) { slow = slow.next; fast = fast.next; }
+            return slow; // cycle entry
+        }
+    }
+    return null; // no cycle
+
+  binary-search: |
+    // Template 1 — exact match
+    int lo = 0, hi = nums.length - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] == target) return mid;
+        else if (nums[mid] < target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+
+    // Template 2 — leftmost true (lower bound)
+    int lo = 0, hi = nums.length;   // hi is exclusive
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (cond(mid)) hi = mid;
+        else lo = mid + 1;
+    }
+    return lo; // first index where cond is true
+
+    // Template 3 — rightmost true (upper bound)
+    int lo = 0, hi = nums.length - 1;
+    while (lo < hi) {
+        int mid = lo + (hi - lo + 1) / 2; // bias upward to avoid infinite loop
+        if (cond(mid)) lo = mid;
+        else hi = mid - 1;
+    }
+    return lo;
+
+  binary-search-on-answer: |
+    int lo = minPossible, hi = maxPossible;
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (feasible(mid)) hi = mid;   // mid works → try smaller
+        else lo = mid + 1;
+    }
+    return lo;
+
+    // Feasibility check (example: ship packages in D days)
+    boolean feasible(int capacity) {
+        int days = 1, load = 0;
+        for (int w : weights) {
+            if (load + w > capacity) { days++; load = 0; }
+            load += w;
+        }
+        return days <= D;
+    }
+
+  prefix-sum: |
+    // Subarray sum equals k — prefix sum + HashMap
+    Map<Integer, Integer> count = new HashMap<>();
+    count.put(0, 1);  // empty prefix
+    int sum = 0, result = 0;
+    for (int num : nums) {
+        sum += num;
+        result += count.getOrDefault(sum - k, 0);
+        count.merge(sum, 1, Integer::sum);
+    }
+
+    // Range sum query — prefix array
+    int[] pre = new int[nums.length + 1];
+    for (int i = 0; i < nums.length; i++) pre[i + 1] = pre[i] + nums[i];
+    // sum(l, r) inclusive:
+    int rangeSum = pre[r + 1] - pre[l];
+
+  monotonic-stack: |
+    // Decreasing stack — next greater element
+    int[] result = new int[nums.length];
+    Arrays.fill(result, -1);
+    Deque<Integer> stack = new ArrayDeque<>(); // indices, not values
+
+    for (int i = 0; i < nums.length; i++) {
+        while (!stack.isEmpty() && nums[stack.peek()] < nums[i])
+            result[stack.pop()] = nums[i];
+        stack.push(i);
+    }
+
+    // Increasing stack — next smaller element
+    // Replace < with > above
+
+  monotonic-deque: |
+    // Sliding window maximum — O(n)
+    Deque<Integer> dq = new ArrayDeque<>(); // indices, decreasing by value
+    int[] result = new int[nums.length - k + 1];
+
+    for (int i = 0; i < nums.length; i++) {
+        while (!dq.isEmpty() && dq.peekFirst() < i - k + 1)
+            dq.pollFirst();                          // out of window
+        while (!dq.isEmpty() && nums[dq.peekLast()] < nums[i])
+            dq.pollLast();                           // smaller — useless
+        dq.offerLast(i);
+        if (i >= k - 1) result[i - k + 1] = nums[dq.peekFirst()];
+    }
+
+  bfs: |
+    Queue<Node> queue = new ArrayDeque<>();
+    Set<Node> visited = new HashSet<>();
+    queue.offer(start);
+    visited.add(start);          // mark on ENQUEUE — not dequeue
+
+    while (!queue.isEmpty()) {
+        int size = queue.size(); // snapshot level size
+        for (int i = 0; i < size; i++) {
+            Node cur = queue.poll();
+            if (cur == target) return level;
+            for (Node nb : graph.get(cur)) {
+                if (!visited.contains(nb)) {
+                    visited.add(nb);
+                    queue.offer(nb);
+                }
+            }
+        }
+        level++;
+    }
+
+  dfs: |
+    // Recursive — mark BEFORE recursing
+    void dfs(int node, boolean[] visited) {
+        visited[node] = true;
+        for (int nb : graph.get(node))
+            if (!visited[nb]) dfs(nb, visited);
+    }
+
+    // Iterative (explicit stack)
+    Deque<Integer> stack = new ArrayDeque<>();
+    boolean[] visited = new boolean[n];
+    stack.push(start);
+    while (!stack.isEmpty()) {
+        int cur = stack.pop();
+        if (visited[cur]) continue;
+        visited[cur] = true;
+        for (int nb : graph.get(cur)) stack.push(nb);
+    }
+
+  topological-sort: |
+    // Kahn's BFS — O(V + E)
+    Map<Integer, List<Integer>> adj = new HashMap<>();
+    int[] inDeg = new int[numNodes];
+    // build adj and inDeg from edges...
+
+    Queue<Integer> queue = new ArrayDeque<>();
+    for (int i = 0; i < numNodes; i++)
+        if (inDeg[i] == 0) queue.offer(i);
+
+    List<Integer> order = new ArrayList<>();
+    while (!queue.isEmpty()) {
+        int cur = queue.poll();
+        order.add(cur);
+        for (int next : adj.getOrDefault(cur, List.of())) {
+            if (--inDeg[next] == 0) queue.offer(next);
+        }
+    }
+    // order.size() < numNodes  →  cycle exists
+
+  union-find-pattern: |
+    int[] parent, rank;
+
+    void init(int n) {
+        parent = new int[n]; rank = new int[n];
+        for (int i = 0; i < n; i++) parent[i] = i;
+    }
+
+    int find(int x) {
+        if (parent[x] != x) parent[x] = find(parent[x]); // path compression
+        return parent[x];
+    }
+
+    boolean union(int x, int y) {
+        int rx = find(x), ry = find(y);
+        if (rx == ry) return false;                        // already connected
+        if (rank[rx] < rank[ry]) { int t=rx; rx=ry; ry=t; }
+        parent[ry] = rx;
+        if (rank[rx] == rank[ry]) rank[rx]++;
+        return true;
+    }
+
+  backtracking: |
+    List<List<Integer>> result = new ArrayList<>();
+
+    void backtrack(int start, List<Integer> path, int[] nums) {
+        result.add(new ArrayList<>(path));         // record current state
+
+        for (int i = start; i < nums.length; i++) {
+            if (i > start && nums[i] == nums[i-1]) continue; // skip duplicates
+            path.add(nums[i]);                     // choose
+            backtrack(i + 1, path, nums);          // explore
+            path.remove(path.size() - 1);          // unchoose
+        }
+    }
+    // Prep: Arrays.sort(nums); backtrack(0, new ArrayList<>(), nums);
+
+  heap-pattern: |
+    // Top-K largest — min-heap of size k
+    PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+    for (int num : nums) {
+        minHeap.offer(num);
+        if (minHeap.size() > k) minHeap.poll(); // evict smallest
+    }
+    // heap top = k-th largest
+
+    // Top-K by frequency
+    Map<Integer, Integer> freq = new HashMap<>();
+    for (int n : nums) freq.merge(n, 1, Integer::sum);
+
+    PriorityQueue<Integer> pq = new PriorityQueue<>(Comparator.comparingInt(freq::get));
+    for (int key : freq.keySet()) {
+        pq.offer(key);
+        if (pq.size() > k) pq.poll();
+    }
+
+    // Streaming median — two heaps
+    PriorityQueue<Integer> lo = new PriorityQueue<>(Collections.reverseOrder()); // max-heap
+    PriorityQueue<Integer> hi = new PriorityQueue<>();                            // min-heap
+
+    void addNum(int num) {
+        lo.offer(num);
+        hi.offer(lo.poll());
+        if (lo.size() < hi.size()) lo.offer(hi.poll());
+    }
+    double findMedian() {
+        return lo.size() > hi.size() ? lo.peek() : (lo.peek() + hi.peek()) / 2.0;
+    }
+
+  dp-1d: |
+    // State: dp[i] = optimal answer for prefix of size i
+    int[] dp = new int[n + 1];
+    dp[0] = 0; dp[1] = /* base */;
+
+    for (int i = 2; i <= n; i++) {
+        dp[i] = Math.max(
+            dp[i - 1],              // skip item i
+            dp[i - 2] + val[i]      // take item i
+        );
+    }
+
+    // Space optimisation — rolling two variables
+    int prev2 = 0, prev1 = 0;
+    for (int i = 0; i < n; i++) {
+        int cur = Math.max(prev1, prev2 + nums[i]);
+        prev2 = prev1; prev1 = cur;
+    }
+
+  dp-2d: |
+    // LCS / Edit Distance skeleton
+    int[][] dp = new int[m + 1][n + 1];
+    // base cases: dp[0][j] = j (insert j chars), dp[i][0] = i (delete i chars)
+    for (int i = 0; i <= m; i++) dp[i][0] = i;
+    for (int j = 0; j <= n; j++) dp[0][j] = j;
+
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (s1.charAt(i-1) == s2.charAt(j-1))
+                dp[i][j] = dp[i-1][j-1];
+            else
+                dp[i][j] = 1 + Math.min(dp[i-1][j-1],
+                                Math.min(dp[i-1][j], dp[i][j-1]));
+        }
+    }
+
+  dp-knapsack: |
+    // 0/1 Knapsack — iterate target in REVERSE to prevent reuse
+    boolean[] dp = new boolean[target + 1];
+    dp[0] = true;
+    for (int num : nums)
+        for (int t = target; t >= num; t--)
+            dp[t] |= dp[t - num];
+
+    // Unbounded Knapsack (coin change) — iterate target FORWARD
+    int[] dp = new int[amount + 1];
+    Arrays.fill(dp, amount + 1);
+    dp[0] = 0;
+    for (int coin : coins)
+        for (int t = coin; t <= amount; t++)
+            dp[t] = Math.min(dp[t], dp[t - coin] + 1);
+
+  memoized-dfs: |
+    Map<String, Integer> memo = new HashMap<>();
+
+    int dfs(String s, int start) {
+        String key = start + ""; // or encode full state
+        if (memo.containsKey(key)) return memo.get(key);
+        if (start == s.length()) return 0;  // base case
+
+        int result = Integer.MAX_VALUE;
+        for (String word : wordSet) {
+            if (s.startsWith(word, start)) {
+                int sub = dfs(s, start + word.length());
+                if (sub != Integer.MAX_VALUE)
+                    result = Math.min(result, 1 + sub);
+            }
+        }
+        memo.put(key, result);
+        return result;
+    }
+
+  kadane: |
+    // Maximum sum subarray
+    int cur = nums[0], best = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        cur  = Math.max(nums[i], cur + nums[i]);
+        best = Math.max(best, cur);
+    }
+
+    // Maximum product subarray — track both max and min
+    int maxP = nums[0], minP = nums[0], result = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        int a = maxP * nums[i], b = minP * nums[i];
+        maxP = Math.max(nums[i], Math.max(a, b));
+        minP = Math.min(nums[i], Math.min(a, b));
+        result = Math.max(result, maxP);
+    }
+
+  interval: |
+    // Merge intervals — sort by start
+    Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+    List<int[]> merged = new ArrayList<>();
+    merged.add(intervals[0]);
+
+    for (int[] cur : intervals) {
+        int[] last = merged.get(merged.size() - 1);
+        if (cur[0] <= last[1]) last[1] = Math.max(last[1], cur[1]); // overlap
+        else merged.add(cur);
+    }
+
+    // Meeting Rooms II — min rooms needed
+    Arrays.sort(intervals, (a, b) -> a[0] - b[0]);
+    PriorityQueue<Integer> ends = new PriorityQueue<>(); // end times
+    for (int[] iv : intervals) {
+        if (!ends.isEmpty() && ends.peek() <= iv[0]) ends.poll(); // room freed
+        ends.offer(iv[1]);
+    }
+    return ends.size(); // rooms in use
+
+  # ---------------------------------------------------------------------------
+  # Algorithms
+  # ---------------------------------------------------------------------------
+
+  union-find-algo: |
+    class DSU {
+        int[] parent, rank;
+        int components;
+
+        DSU(int n) {
+            parent = new int[n]; rank = new int[n]; components = n;
+            for (int i = 0; i < n; i++) parent[i] = i;
+        }
+
+        int find(int x) {
+            if (parent[x] != x) parent[x] = find(parent[x]); // path compression
+            return parent[x];
+        }
+
+        boolean union(int x, int y) {
+            int rx = find(x), ry = find(y);
+            if (rx == ry) return false;
+            if (rank[rx] < rank[ry]) { int t=rx; rx=ry; ry=t; }
+            parent[ry] = rx;
+            if (rank[rx] == rank[ry]) rank[rx]++;
+            components--;
+            return true;
+        }
+
+        boolean connected(int x, int y) { return find(x) == find(y); }
+    }
+
+  dijkstra: |
+    // Lazy Dijkstra — O((V + E) log V)
+    int[] dist = new int[n];
+    Arrays.fill(dist, Integer.MAX_VALUE);
+    dist[src] = 0;
+
+    // {distance, node}
+    PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[0]));
+    pq.offer(new int[]{0, src});
+
+    while (!pq.isEmpty()) {
+        int[] cur = pq.poll();
+        int d = cur[0], u = cur[1];
+        if (d > dist[u]) continue;   // stale entry — skip
+
+        for (int[] edge : graph[u]) {
+            int v = edge[0], w = edge[1];
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.offer(new int[]{dist[v], v});
+            }
+        }
+    }
+
+  kmp: |
+    // Build LPS (failure function) — O(m)
+    int[] lps = new int[pattern.length()];
+    int len = 0, i = 1;
+    while (i < pattern.length()) {
+        if (pattern.charAt(i) == pattern.charAt(len)) {
+            lps[i++] = ++len;
+        } else if (len > 0) {
+            len = lps[len - 1];    // fallback without advancing i
+        } else {
+            lps[i++] = 0;
+        }
+    }
+
+    // Search — O(n), text pointer never backtracks
+    int ti = 0, pi = 0;
+    while (ti < text.length()) {
+        if (text.charAt(ti) == pattern.charAt(pi)) { ti++; pi++; }
+        if (pi == pattern.length()) {
+            matches.add(ti - pi);  // match at ti - pi
+            pi = lps[pi - 1];
+        } else if (ti < text.length() && text.charAt(ti) != pattern.charAt(pi)) {
+            if (pi > 0) pi = lps[pi - 1]; else ti++;
+        }
+    }
+
+  kadane-algo: |
+    // Maximum subarray — O(n) time O(1) space
+    int cur = nums[0], best = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        cur  = Math.max(nums[i], cur + nums[i]);
+        best = Math.max(best, cur);
+    }
+    // All-negative input: best = max single element (correct above)
+
+    // Maximum product subarray
+    int maxP = nums[0], minP = nums[0], result = nums[0];
+    for (int i = 1; i < nums.length; i++) {
+        int a = maxP * nums[i], b = minP * nums[i];
+        maxP = Math.max(nums[i], Math.max(a, b));
+        minP = Math.min(nums[i], Math.min(a, b));
+        result = Math.max(result, maxP);
+    }
+
+  binary-search-algo: |
+    // Arrays.binarySearch — returns index if found, -(insertion point)-1 if not
+    int idx = Arrays.binarySearch(arr, key);
+    if (idx < 0) idx = -(idx + 1); // insertion point
+
+    // Manual — three templates (exact / leftmost / rightmost)
+    // Exact:
+    int lo = 0, hi = n - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (arr[mid] == key) return mid;
+        else if (arr[mid] < key) lo = mid + 1;
+        else hi = mid - 1;
+    }
+
+    // Leftmost (first occurrence):
+    int lo = 0, hi = n;
+    while (lo < hi) { int mid = lo+(hi-lo)/2; if (arr[mid] >= key) hi=mid; else lo=mid+1; }
+    return lo; // lo == n if not found
+
+    // Rightmost (last occurrence):
+    int lo = 0, hi = n;
+    while (lo < hi) { int mid = lo+(hi-lo)/2; if (arr[mid] <= key) lo=mid+1; else hi=mid; }
+    return lo - 1; // -1 if not found
+
+  # ---------------------------------------------------------------------------
+  # Data Structures
+  # ---------------------------------------------------------------------------
+
+  trie: |
+    class TrieNode {
+        TrieNode[] ch = new TrieNode[26];
+        boolean end;
+    }
+
+    class Trie {
+        private final TrieNode root = new TrieNode();
+
+        void insert(String word) {
+            TrieNode node = root;
+            for (char c : word.toCharArray()) {
+                int i = c - 'a';
+                if (node.ch[i] == null) node.ch[i] = new TrieNode();
+                node = node.ch[i];
+            }
+            node.end = true;
+        }
+
+        boolean search(String word) {
+            TrieNode node = get(word);
+            return node != null && node.end;
+        }
+
+        boolean startsWith(String prefix) { return get(prefix) != null; }
+
+        private TrieNode get(String s) {
+            TrieNode node = root;
+            for (char c : s.toCharArray()) {
+                node = node.ch[c - 'a'];
+                if (node == null) return null;
+            }
+            return node;
+        }
+    }
+
+  doubly-linked-list: |
+    // LRU Cache — HashMap + DoublyLinkedList, O(1) get/put
+    class LRUCache {
+        private final int cap;
+        private final Map<Integer, Node> map = new HashMap<>();
+        private final Node head = new Node(0, 0); // dummy sentinels
+        private final Node tail = new Node(0, 0);
+
+        LRUCache(int capacity) {
+            cap = capacity;
+            head.next = tail; tail.prev = head;
+        }
+
+        public int get(int key) {
+            if (!map.containsKey(key)) return -1;
+            Node n = map.get(key);
+            remove(n); addFront(n);
+            return n.val;
+        }
+
+        public void put(int key, int value) {
+            if (map.containsKey(key)) remove(map.get(key));
+            if (map.size() == cap) remove(tail.prev); // evict LRU
+            addFront(new Node(key, value));
+        }
+
+        private void remove(Node n) {
+            map.remove(n.key);
+            n.prev.next = n.next; n.next.prev = n.prev;
+        }
+        private void addFront(Node n) {
+            map.put(n.key, n);
+            n.next = head.next; n.prev = head;
+            head.next.prev = n; head.next = n;
+        }
+
+        static class Node {
+            int key, val; Node prev, next;
+            Node(int k, int v) { key = k; val = v; }
+        }
+    }
+
+  linkedhashmap: |
+    // LRU Cache — one-liner Java shortcut
+    class LRUCache extends LinkedHashMap<Integer, Integer> {
+        private final int cap;
+        LRUCache(int capacity) {
+            super(capacity, 0.75f, true); // accessOrder = true
+            cap = capacity;
+        }
+        public int get(int key) { return super.getOrDefault(key, -1); }
+        public void put(int key, int value) { super.put(key, value); }
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Integer, Integer> e) {
+            return size() > cap;
+        }
+    }
+
+  heap: |
+    // Min-heap (default)
+    PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+
+    // Max-heap
+    PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+
+    // Custom comparator — by second element of int[]
+    PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[1] - b[1]);
+
+    // Build heap from existing collection — O(n)
+    PriorityQueue<Integer> heap = new PriorityQueue<>(list);
+
+    // IMPORTANT: contains() and remove(Object) are O(n)
+    // Lazy deletion workaround:
+    Set<Integer> removed = new HashSet<>();
+    // When polling, skip if in removed set
+    while (!heap.isEmpty() && removed.contains(heap.peek()))
+        heap.poll();

@@ -1,39 +1,76 @@
 # Senior SWE Interview Cheat-Sheet
 
-A curated, scannable reference for senior software engineering interviews — data structures, algorithmic patterns, recognition cues, and pattern-DS pairings.
+An interactive reference for senior software engineering technical interviews — data structures, algorithmic patterns, recognition cues, Java snippets, and a pattern-recognition quiz.
 
-**👉 Read the cheat-sheet:** [`cheatsheet.md`](./cheatsheet.md)
+**👉 [Open the app](https://sharmavipin1608.github.io/coding-cheat-sheet/)** ← GitHub Pages
+
+---
 
 ## What's inside
 
-- 5 sections covering data structures, algorithmic patterns, recognition cues ("if you see X, think Y"), pattern + DS pairings, and senior-only topics
-- Color-tiered complexity ratings (green → red)
-- Java-flavored examples and concurrency notes
-- All content lives in YAML — both this Markdown and the (planned) interactive HTML are generated views
+### 9 tabs
+
+| Tab | What it covers |
+|---|---|
+| **Data Structures** | 21 structures — Java type, complexity chips, senior insight, gotchas, concurrency |
+| **Patterns** | 27 patterns — mental cue, time/space, DS pairings, classic problems, gotchas |
+| **Recognition Cues** | 47 signal → pattern mappings — "if you see X, think Y" |
+| **Pairings** | Pattern + DS rationale + 7 composite designs (LRU, Dijkstra, Streaming Median…) |
+| **Senior-Only** | Concurrency cheat-sheet, DS senior insights, pattern gotchas, cue annotations |
+| **Algorithms** | 26 algorithms — sorting, graph traversal, shortest path, MST, string matching |
+| **Java** | Input size → complexity guide, memory reference, collections decision table, gotchas, code snippet gallery |
+| **Dashboard** | Live coverage overview from confidence dots + quiz accuracy by pattern |
+| **Quiz** | 154 problems (NeetCode 150) — pick pattern + DS, track accuracy, see weak spots |
+
+### Key features
+
+- **Confidence dots** on every row — click to cycle ⚫ not reviewed → 🟡 shaky → 🟢 know cold. Persisted in `localStorage`.
+- **Daily Scan mode** — hides rows you've marked know-cold so you only review weak spots.
+- **Study / Scan modes** — Study expands rows on click; Scan is dense read-only.
+- **Filter chips** — by category, complexity tier, confidence level.
+- **Search** — fuzzy match across name, cues, when-to-use, classic problems.
+- **Java snippets** — 30 canonical implementations with syntax highlighting (Union-Find, Trie, LRU Cache, BFS/DFS, Dijkstra, KMP, all binary search templates, backtracking, DP skeletons…).
+- **Cross-references** — clicking a DS or pattern tag jumps to that row in its tab.
+- **Quiz** — 10 questions per session, single/multi-select by difficulty, accuracy tracked per pattern.
+
+---
 
 ## Repository layout
 
 ```
-data/                    # YAML source of truth
-  data-structures.yaml
-  patterns.yaml
-  recognition-cues.yaml
-  pairings.yaml
-  problems.yaml          # seed data for upcoming quiz feature
-cheatsheet.md            # human-readable reference
-CLAUDE.md                # project context for AI-assisted development
+index.html              ← app entry point
+styles.css              ← dark-only theme (matches python-guide)
+utils.js                ← helpers: escHtml, getTier, chipHtml, highlightJava…
+render.js               ← all tab rendering functions
+quiz.js                 ← quiz state and logic
+app.js                  ← controller: state, routing, filter/search
+
+data-structures.yaml    ← 21 structures (source of truth)
+patterns.yaml           ← 27 patterns
+recognition-cues.yaml   ← 47 signal → pattern cues
+pairings.yaml           ← pattern + DS pairings + composites
+algorithms.yaml         ← 26 algorithms
+problems.yaml           ← 154 problems (NeetCode 150)
+java-snippets.yaml      ← 30 Java code templates
+
+cheatsheet.md           ← static Markdown reference (GitHub-readable)
+CLAUDE.md               ← project context for AI-assisted development
 ```
 
-## Roadmap
+## Running locally
 
-- [x] Phase 1 — YAML data + Markdown reference
-- [ ] Phase 2 — Interactive HTML app with filtering, search, confidence tracking
-- [ ] Phase 3 — Quiz mode (problem → pattern + DS, seeded from NeetCode 150)
-- [ ] Phase 4 — Spaced-repetition layer for daily scan
+```bash
+git clone https://github.com/sharmavipin1608/coding-cheat-sheet.git
+cd Coding-cheat-sheet
+python3 -m http.server 8000
+# open http://localhost:8000
+```
 
-## Daily use
+The app uses `fetch()` to load YAML files — requires HTTP, not `file://`.
 
-Open `cheatsheet.md` and scan **Section 3 (Recognition Cues)** and **Section 4 (Pairings)** — these build pattern-recognition speed. Section 1 and 2 are deeper reference for weekly review.
+## Tech
+
+Vanilla JS, no framework, no build step. YAML loaded at runtime via [js-yaml CDN](https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js). State persisted in `localStorage`. Deployable directly to GitHub Pages.
 
 ## License
 
